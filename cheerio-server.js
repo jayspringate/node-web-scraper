@@ -36,6 +36,10 @@ app.get('/scrape', function(req, res){
     // console.log('Data successfully scraped');
   });
 
+    fs.unlink('data/gameData.json', function (err) {
+
+      });
+
     var homeTeam, roadTeam;  //use these to test line history page for match
 
     //BEGIN SCRAPE WITH TEAM = ROAD TEAM
@@ -50,14 +54,21 @@ app.get('/scrape', function(req, res){
 
       var date = data.data('game-date');
 
-      jsonRoad.date = date;
+      jsonRoad.date = jsonHome.date = date;
 
-      var team = data.children().children('.cmg_team_name').first().text();
+      jsonRoad.teamCourt = 'road';
+
+      jsonHome.teamCourt = 'home';
+
+      var team = data.children().children('.cmg_team_name').first().contents().filter(function() {
+        return this.nodeType == 3;
+      }).text().trim();
 
       jsonRoad.team = team;
-      jsonRoad.court = 'road';
 
-      var opponent = data.children().children('.cmg_team_name').last().text();
+      var opponent = data.children().children('.cmg_team_name').last().contents().filter(function() {
+        return this.nodeType == 3;
+      }).text().trim();
 
       jsonRoad.opponent = opponent;
 
@@ -69,7 +80,24 @@ app.get('/scrape', function(req, res){
 
       jsonRoad.opponentScore = opponentScore;
 
-      fs.appendFile('data/gameData.json', JSON.stringify(jsonRoad, null, 4), function(err){
+      jsonHome.team = opponent;
+
+      jsonHome.opponent = team;
+
+      jsonHome.teamScore = opponentScore;
+
+      jsonHome.opponentScore = teamScore;
+
+      jsonRoad.eventID = jsonHome.eventID = element;
+
+
+
+      fs.appendFile('data/gameData.json', JSON.stringify(jsonRoad, null, 4), function (err){
+
+
+      })
+
+      fs.appendFile('data/gameData.json', JSON.stringify(jsonHome, null, 4), function (err){
 
 
       })
@@ -78,41 +106,45 @@ app.get('/scrape', function(req, res){
 
   })
 
-eventIdArray.forEach(function(element, index, array) {
+// eventIdArray.forEach(function(element, index, array) {
 
-    $('div[data-event-id=' + element + ']').filter(function() {
+//     $('div[data-event-id=' + element + ']').filter(function() {
 
-      var data = $(this);
+//       var data = $(this);
 
-      var date = data.data('game-date');
+//       var date = data.data('game-date');
 
-      jsonHome.date = date;
+//       jsonHome.date = date;
 
-      var team = data.children().children('.cmg_team_name').last().text();
+//       var team = data.children().children('.cmg_team_name').last().contents().filter(function() {
+//         return this.nodeType == 3;
+//       }).text().trim();
 
-      jsonHome.team = team;
-      jsonHome.court = 'home';
+//       jsonHome.team = team;
+//       jsonHome.court = 'home';
 
-      var opponent = data.children().children('.cmg_team_name').first().text();
+//       var opponent = data.children().children('.cmg_team_name').first().contents().filter(function() {
+//         return this.nodeType == 3;
+//       }).text().trim();
 
-      jsonHome.opponent = opponent;
+//       jsonHome.opponent = opponent;
 
-      var teamScore = parseInt(data.children().children().children('.cmg_matchup_list_score_home').text());
+//       var teamScore = parseInt(data.children().children().children('.cmg_matchup_list_score_home').text());
 
-      jsonHome.teamScore = teamScore;
+//       jsonHome.teamScore = teamScore;
 
-      var opponentScore = parseInt(data.children().children().children('.cmg_matchup_list_score_away').text());
+//       var opponentScore = parseInt(data.children().children().children('.cmg_matchup_list_score_away').text());
 
-      jsonHome.opponentScore = opponentScore;
+//       jsonHome.opponentScore = opponentScore;
 
-      fs.appendFile('data/gameData.json', JSON.stringify(jsonHome, null, 4), function(err){
+//       fs.appendFile('data/gameData.json', JSON.stringify(jsonHome, null, 4), function(err){
 
 
-      })
+//       })
 
-    })
+//     })
 
-  })
+//   })
 
     //won't be writing file, will be saving to postgresDB
 
