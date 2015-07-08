@@ -1,127 +1,145 @@
 {
     "date": "2015-02-22 13:00:00",
+    "teamCourt": "road",
     "team": "CLE",
-    "court": "road",
     "opponent": "NY",
     "teamScore": 101,
-    "opponentScore": 83
-}{
-    "date": "2015-02-22 15:30:00",
-    "team": "ATL",
-    "court": "road",
-    "opponent": "MIL",
-    "teamScore": 97,
-    "opponentScore": 86
-}{
-    "date": "2015-02-22 15:30:00",
-    "team": "WAS",
-    "court": "road",
-    "opponent": "DET",
-    "teamScore": 89,
-    "opponentScore": 106
-}{
-    "date": "2015-02-22 18:00:00",
-    "team": "GS",
-    "court": "road",
-    "opponent": "IND",
-    "teamScore": 98,
-    "opponentScore": 104
-}{
-    "date": "2015-02-22 18:00:00",
-    "team": "PHI",
-    "court": "road",
-    "opponent": "ORL",
-    "teamScore": 98,
-    "opponentScore": 103
-}{
-    "date": "2015-02-22 19:00:00",
-    "team": "DEN",
-    "court": "road",
-    "opponent": "OKC",
-    "teamScore": 94,
-    "opponentScore": 119
-}{
-    "date": "2015-02-22 19:30:00",
-    "team": "CHAR",
-    "court": "road",
-    "opponent": "DAL",
-    "teamScore": 81,
-    "opponentScore": 92
-}{
-    "date": "2015-02-22 21:00:00",
-    "team": "MEM",
-    "court": "road",
-    "opponent": "POR",
-    "teamScore": 98,
-    "opponentScore": 92
-}{
-    "date": "2015-02-22 21:30:00",
-    "team": "BOS",
-    "court": "road",
-    "opponent": "LAL",
-    "teamScore": 111,
-    "opponentScore": 118
+    "opponentScore": 83,
+    "eventID": "883511"
 }{
     "date": "2015-02-22 13:00:00",
+    "teamCourt": "home",
     "team": "NY",
-    "court": "home",
     "opponent": "CLE",
     "teamScore": 83,
-    "opponentScore": 101
+    "opponentScore": 101,
+    "eventID": "883511"
 }{
     "date": "2015-02-22 15:30:00",
+    "teamCourt": "home",
     "team": "MIL",
-    "court": "home",
     "opponent": "ATL",
     "teamScore": 86,
-    "opponentScore": 97
+    "opponentScore": 97,
+    "eventID": "883512"
 }{
     "date": "2015-02-22 15:30:00",
+    "teamCourt": "road",
+    "team": "ATL",
+    "opponent": "MIL",
+    "teamScore": 97,
+    "opponentScore": 86,
+    "eventID": "883512"
+}{
+    "date": "2015-02-22 15:30:00",
+    "teamCourt": "road",
+    "team": "WAS",
+    "opponent": "DET",
+    "teamScore": 89,
+    "opponentScore": 106,
+    "eventID": "883513"
+}{
+    "date": "2015-02-22 15:30:00",
+    "teamCourt": "home",
     "team": "DET",
-    "court": "home",
     "opponent": "WAS",
     "teamScore": 106,
-    "opponentScore": 89
+    "opponentScore": 89,
+    "eventID": "883513"
 }{
     "date": "2015-02-22 18:00:00",
+    "teamCourt": "road",
+    "team": "GS",
+    "opponent": "IND",
+    "teamScore": 98,
+    "opponentScore": 104,
+    "eventID": "883514"
+}{
+    "date": "2015-02-22 18:00:00",
+    "teamCourt": "home",
     "team": "IND",
-    "court": "home",
     "opponent": "GS",
     "teamScore": 104,
-    "opponentScore": 98
+    "opponentScore": 98,
+    "eventID": "883514"
 }{
     "date": "2015-02-22 18:00:00",
+    "teamCourt": "road",
+    "team": "PHI",
+    "opponent": "ORL",
+    "teamScore": 98,
+    "opponentScore": 103,
+    "eventID": "883515"
+}{
+    "date": "2015-02-22 18:00:00",
+    "teamCourt": "home",
     "team": "ORL",
-    "court": "home",
     "opponent": "PHI",
     "teamScore": 103,
-    "opponentScore": 98
+    "opponentScore": 98,
+    "eventID": "883515"
 }{
     "date": "2015-02-22 19:00:00",
+    "teamCourt": "road",
+    "team": "DEN",
+    "opponent": "OKC",
+    "teamScore": 94,
+    "opponentScore": 119,
+    "eventID": "883516"
+}{
+    "date": "2015-02-22 19:00:00",
+    "teamCourt": "home",
     "team": "OKC",
-    "court": "home",
     "opponent": "DEN",
     "teamScore": 119,
-    "opponentScore": 94
+    "opponentScore": 94,
+    "eventID": "883516"
 }{
     "date": "2015-02-22 19:30:00",
+    "teamCourt": "home",
     "team": "DAL",
-    "court": "home",
     "opponent": "CHAR",
     "teamScore": 92,
-    "opponentScore": 81
+    "opponentScore": 81,
+    "eventID": "883517"
+}{
+    "date": "2015-02-22 19:30:00",
+    "teamCourt": "road",
+    "team": "CHAR",
+    "opponent": "DAL",
+    "teamScore": 81,
+    "opponentScore": 92,
+    "eventID": "883517"
 }{
     "date": "2015-02-22 21:00:00",
+    "teamCourt": "road",
+    "team": "MEM",
+    "opponent": "POR",
+    "teamScore": 98,
+    "opponentScore": 92,
+    "eventID": "883518"
+}{
+    "date": "2015-02-22 21:00:00",
+    "teamCourt": "home",
     "team": "POR",
-    "court": "home",
     "opponent": "MEM",
     "teamScore": 92,
-    "opponentScore": 98
+    "opponentScore": 98,
+    "eventID": "883518"
 }{
     "date": "2015-02-22 21:30:00",
+    "teamCourt": "road",
+    "team": "BOS",
+    "opponent": "LAL",
+    "teamScore": 111,
+    "opponentScore": 118,
+    "eventID": "883519"
+}{
+    "date": "2015-02-22 21:30:00",
+    "teamCourt": "home",
     "team": "LAL",
-    "court": "home",
     "opponent": "BOS",
     "teamScore": 118,
-    "opponentScore": 111
+    "opponentScore": 111,
+    "eventID": "883519"
 }
