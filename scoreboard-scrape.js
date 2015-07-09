@@ -4,6 +4,7 @@ var express = require('express');
 var fs = require('fs');
 var request = require('request');
 var cheerio = require('cheerio');
+var async = require('async');
 
 module.exports = function (req, res) {
 
@@ -11,7 +12,15 @@ module.exports = function (req, res) {
 
   var scoreboardUrl = 'http://www.covers.com/Sports/NBA/Matchups?selectedDate=' + dateString;
 
-  request(scoreboardUrl, function (err, response, html) {
+  request(scoreboardUrl, scoreboardCallback);
+
+  res.send('Check your console!');
+
+  console.log('Data successfully scraped');
+}
+
+
+function scoreboardCallback (err, response, html) {
     if(err) {
       console.log(err);
     }
@@ -89,8 +98,27 @@ module.exports = function (req, res) {
     })
   })
 
-  res.send('Check your console!');
+  lineHistoryCallback(eventIdArray);
+  }
+
+  function logArray(item) {
+    var lineHistoryUrl = 'http://www.covers.com/odds/linehistory.aspx?eventId=' + item + '&sport=NBA';
+
+    request(lineHistoryUrl, function (err, response, html) {
+    if(err) {
+      console.log(err);
+    }
+
+    var $$ = cheerio.load(html);
+
+    console.log($$('#ucLineHistory_h3LineHistory').text());
+  })
+  }
+
+function lineHistoryCallback(arr) {
+
+  async.each(arr, logArray, function (err) {
 
   })
-  console.log('Data successfully scraped');
 }
+
