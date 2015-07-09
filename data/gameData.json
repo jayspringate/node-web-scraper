@@ -16,19 +16,19 @@
     "eventID": "883511"
 }{
     "date": "2015-02-22 15:30:00",
-    "teamCourt": "home",
-    "team": "MIL",
-    "opponent": "ATL",
-    "teamScore": 86,
-    "opponentScore": 97,
-    "eventID": "883512"
-}{
-    "date": "2015-02-22 15:30:00",
     "teamCourt": "road",
     "team": "ATL",
     "opponent": "MIL",
     "teamScore": 97,
     "opponentScore": 86,
+    "eventID": "883512"
+}{
+    "date": "2015-02-22 15:30:00",
+    "teamCourt": "home",
+    "team": "MIL",
+    "opponent": "ATL",
+    "teamScore": 86,
+    "opponentScore": 97,
     "eventID": "883512"
 }{
     "date": "2015-02-22 15:30:00",
@@ -96,19 +96,19 @@
     "eventID": "883516"
 }{
     "date": "2015-02-22 19:30:00",
-    "teamCourt": "home",
-    "team": "DAL",
-    "opponent": "CHAR",
-    "teamScore": 92,
-    "opponentScore": 81,
-    "eventID": "883517"
-}{
-    "date": "2015-02-22 19:30:00",
     "teamCourt": "road",
     "team": "CHAR",
     "opponent": "DAL",
     "teamScore": 81,
     "opponentScore": 92,
+    "eventID": "883517"
+}{
+    "date": "2015-02-22 19:30:00",
+    "teamCourt": "home",
+    "team": "DAL",
+    "opponent": "CHAR",
+    "teamScore": 92,
+    "opponentScore": 81,
     "eventID": "883517"
 }{
     "date": "2015-02-22 21:00:00",
