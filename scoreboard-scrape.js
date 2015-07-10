@@ -101,7 +101,7 @@ function scoreboardCallback (err, response, html) {
   lineHistoryCallback(eventIdArray);
   }
 
-  function logArray(item) {
+  function logArray(item, callback) {
     var lineHistoryUrl = 'http://www.covers.com/odds/linehistory.aspx?eventId=' + item + '&sport=NBA';
 
     request(lineHistoryUrl, function (err, response, html) {
@@ -111,14 +111,21 @@ function scoreboardCallback (err, response, html) {
 
     var $$ = cheerio.load(html);
 
-    console.log($$('#ucLineHistory_h3LineHistory').text());
+    console.log(item);
+
+    //need to input condition to test for OFF
+
+    console.log($$('a[href*="269"]').parent().parent().next().text()); //269 is the ID for Bookmaker
+
+    callback(); //callback inside request since that's the async part
+
   })
+
+
   }
 
 function lineHistoryCallback(arr) {
 
-  async.each(arr, logArray, function (err) {
-
-  })
+  async.eachSeries(arr, logArray);
 }
 
