@@ -19,7 +19,6 @@ module.exports = function (req, res) {
   console.log('Data successfully scraped');
 }
 
-
 function scoreboardCallback (err, response, html) {
     if(err) {
       console.log(err);
@@ -101,7 +100,7 @@ function scoreboardCallback (err, response, html) {
   lineHistoryCallback(eventIdArray);
   }
 
-  function logArray(item, callback) {
+  function logArray(item, callback) {//item here refers to eventIdArray
     var lineHistoryUrl = 'http://www.covers.com/odds/linehistory.aspx?eventId=' + item + '&sport=NBA';
 
     request(lineHistoryUrl, function (err, response, html) {
@@ -111,16 +110,48 @@ function scoreboardCallback (err, response, html) {
 
     var $$ = cheerio.load(html);
 
-    console.log(item);
+    var selectorArray = [];
+    var resultArray = [];
 
-    //need to input condition to test for OFF
+    var spreadOpenSelector = $$('a[href*="269"]').parent().parent().next().children().eq(1); //269 is the ID for Bookmaker
 
-    console.log($$('a[href*="269"]').parent().parent().next().text()); //269 is the ID for Bookmaker
+    var totalOpenSelector = $$('a[href*="269"]').parent().parent().next().children().last();
+
+    var spreadCloseSelector = $$('a[href*="761"]').parent().parent().prev().children().eq(1); //761 is the ID of the book following BookMaker
+
+    var totalCloseSelector = $$('a[href*="761"]').parent().parent().prev().children().last();
+
+    selectorArray.push(spreadOpenSelector, spreadCloseSelector, totalOpenSelector, totalCloseSelector);
+
+    function totalOpenSelectorTest () {
+      if (totalOpenSelector.text() === 'OFF') {
+        totalOpenSelector = totalOpenSelector.parent().next().children().last();
+          totalOpenSelectorTest();
+        }
+    };
+
+    function spreadOpenSelectorTest () {
+      if (spreadOpenSelector.text() === 'OFF') {
+        spreadOpenSelector = spreadOpenSelector.parent().next().children.eq(2);
+          spreadOpenSelectorTest();
+        }
+    };
+
+    totalOpenSelectorTest();
+    spreadOpenSelectorTest();
+
+    var spreadOpen = spreadOpenSelector.text().split('/')[0];
+    var totalOpen = totalOpenSelector.text().split('-')[0];
+    var spreadClose = spreadCloseSelector.text().split('/')[0];
+    var totalClose = totalCloseSelector.text().split('-')[0];
+
+    resultArray.push(item, spreadOpen, spreadClose, totalOpen, totalClose);
+
+    console.log(resultArray);
 
     callback(); //callback inside request since that's the async part
 
   })
-
 
   }
 
