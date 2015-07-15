@@ -14,9 +14,8 @@ module.exports = function (req, res) {
 
   request(scoreboardUrl, scoreboardCallback);
 
-  res.send('Check your console!');
-
-  console.log('Data successfully scraped');
+  res.send('See console');
+  
 }
 
 function scoreboardCallback (err, response, html) {
@@ -158,5 +157,7 @@ function scoreboardCallback (err, response, html) {
 function lineHistoryCallback(arr) {
 
   async.eachSeries(arr, logArray);
+  
+  console.log('Data successfully scraped');
 }
 
