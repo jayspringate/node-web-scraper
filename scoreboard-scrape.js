@@ -5,6 +5,9 @@ var fs = require('fs');
 var request = require('request');
 var cheerio = require('cheerio');
 var async = require('async');
+var _ = require('lodash/array');
+
+var gameDataArray = [];
 
 module.exports = function (req, res) {
 
@@ -15,7 +18,7 @@ module.exports = function (req, res) {
   request(scoreboardUrl, scoreboardCallback);
 
   res.send('See console');
-  
+
 }
 
 function scoreboardCallback (err, response, html) {
@@ -25,7 +28,7 @@ function scoreboardCallback (err, response, html) {
 
     var $ = cheerio.load(html);
 
-    var gameDataArray = [];
+
 
     var jsonRoad = {};
 
@@ -40,13 +43,13 @@ function scoreboardCallback (err, response, html) {
     fs.writeFile('data/event-id-array.js', eventIdArray, function (err){
     });
 
-    fs.unlink('data/gameData.json', function (err) {
+    fs.unlink('data/gameDataArray.js', function (err) {
 
     });
 
     eventIdArray.forEach(function (element, index, array) {
 
-    $('div[data-event-id=' + element + ']').filter(function() {
+      $('div[data-event-id=' + element + ']').filter(function() {
 
       var data = $(this);
 
@@ -86,20 +89,19 @@ function scoreboardCallback (err, response, html) {
 
       jsonHome.opponentScore = teamScore;
 
-      jsonRoad.eventID = jsonHome.eventID = element;
+      jsonRoad.eventId = jsonHome.eventId = parseInt(element);
 
-      fs.appendFile('data/gameData.json', JSON.stringify(jsonRoad, null, 4), function (err){
-      })
+      gameDataArray.push(JSON.stringify(jsonRoad, null, 4), JSON.stringify(jsonHome, null, 4));
 
-      fs.appendFile('data/gameData.json', JSON.stringify(jsonHome, null, 4), function (err){
-      })
     })
   })
 
   lineHistoryCallback(eventIdArray);
+
   }
 
   function logArray(item, callback) {//item here refers to eventIdArray
+
     var lineHistoryUrl = 'http://www.covers.com/odds/linehistory.aspx?eventId=' + item + '&sport=NBA';
 
     request(lineHistoryUrl, function (err, response, html) {
@@ -147,6 +149,30 @@ function scoreboardCallback (err, response, html) {
     resultArray.push(item, spreadOpen, spreadClose, totalOpen, totalClose);
 
     console.log(resultArray);
+    console.log(gameDataArray[0]);
+    console.log(item);
+
+    var gameIndex = _.findIndex(gameDataArray, function(chr) {
+      return JSON.parse(chr).teamCourt == 'home' && JSON.parse(chr).eventId == item;
+    });
+
+    spreadOpen = JSON.parse(gameDataArray[gameIndex]).spreadOpen;
+    spreadClose = JSON.parse(gameDataArray[gameIndex]).spreadClose;
+    totalOpen = JSON.parse(gameDataArray[gameIndex]).totalOpen;
+    totalClose = JSON.parse(gameDataArray[gameIndex]).totalClose;
+
+
+    gameIndex =_.findIndex(gameDataArray, function(chr) {
+      return JSON.parse(chr).teamCourt == 'road' && JSON.parse(chr).eventId == item;
+    });
+
+    spreadOpen = -spreadOpen;
+    spreadClose = -spreadClose;
+
+    spreadOpen = JSON.parse(gameDataArray[gameIndex]).spreadOpen;
+    spreadClose = JSON.parse(gameDataArray[gameIndex]).spreadOpen;
+    totalOpen = JSON.parse(gameDataArray[gameIndex]).totalOpen;
+    totalClose = JSON.parse(gameDataArray[gameIndex]).totalClose;
 
     callback(); //callback inside request since that's the async part
 
@@ -157,7 +183,7 @@ function scoreboardCallback (err, response, html) {
 function lineHistoryCallback(arr) {
 
   async.eachSeries(arr, logArray);
-  
+
   console.log('Data successfully scraped');
 }
 
