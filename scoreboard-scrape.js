@@ -30,9 +30,7 @@ function scoreboardCallback (err, response, html) {
 
 
 
-    var jsonRoad = {};
 
-    var jsonHome = {};
 
     var eventIdArray = [];
 
@@ -54,6 +52,10 @@ function scoreboardCallback (err, response, html) {
       var data = $(this);
 
       var date = data.data('game-date');
+
+      var jsonRoad = {};
+
+      var jsonHome = {};
 
       jsonRoad.date = jsonHome.date = date;
 
@@ -91,9 +93,10 @@ function scoreboardCallback (err, response, html) {
 
       jsonRoad.eventId = jsonHome.eventId = parseInt(element);
 
-      gameDataArray.push(JSON.stringify(jsonRoad, null, 4), JSON.stringify(jsonHome, null, 4));
+      gameDataArray.push(jsonRoad, jsonHome);
 
     })
+
   })
 
   lineHistoryCallback(eventIdArray);
@@ -141,38 +144,36 @@ function scoreboardCallback (err, response, html) {
     totalOpenSelectorTest();
     spreadOpenSelectorTest();
 
-    var spreadOpen = spreadOpenSelector.text().split('/')[0];
-    var totalOpen = totalOpenSelector.text().split('-')[0];
-    var spreadClose = spreadCloseSelector.text().split('/')[0];
-    var totalClose = totalCloseSelector.text().split('-')[0];
+    var spreadOpen = parseInt(spreadOpenSelector.text().split('/')[0]);
+    var totalOpen = parseInt(totalOpenSelector.text().split('-')[0]);
+    var spreadClose = parseInt(spreadCloseSelector.text().split('/')[0]);
+    var totalClose = parseInt(totalCloseSelector.text().split('-')[0]);
 
     resultArray.push(item, spreadOpen, spreadClose, totalOpen, totalClose);
 
     console.log(resultArray);
-    console.log(gameDataArray[0]);
-    console.log(item);
 
     var gameIndex = _.findIndex(gameDataArray, function(chr) {
-      return JSON.parse(chr).teamCourt == 'home' && JSON.parse(chr).eventId == item;
+      return ((chr.teamCourt == 'home') && (chr.eventId == item));
     });
 
-    spreadOpen = JSON.parse(gameDataArray[gameIndex]).spreadOpen;
-    spreadClose = JSON.parse(gameDataArray[gameIndex]).spreadClose;
-    totalOpen = JSON.parse(gameDataArray[gameIndex]).totalOpen;
-    totalClose = JSON.parse(gameDataArray[gameIndex]).totalClose;
+    gameDataArray[gameIndex].spreadOpen = spreadOpen;
+    gameDataArray[gameIndex].spreadClose = spreadClose;
+    gameDataArray[gameIndex].totalOpen = totalOpen;
+    gameDataArray[gameIndex].totalClose = totalClose;
 
+    console.log(gameDataArray[gameIndex]);
 
     gameIndex =_.findIndex(gameDataArray, function(chr) {
-      return JSON.parse(chr).teamCourt == 'road' && JSON.parse(chr).eventId == item;
+      return chr.teamCourt == 'road' && chr.eventId == item;
     });
 
-    spreadOpen = -spreadOpen;
-    spreadClose = -spreadClose;
+    gameDataArray[gameIndex].spreadOpen = -spreadOpen;
+    gameDataArray[gameIndex].spreadClose = -spreadClose;
+    gameDataArray[gameIndex].totalOpen = totalOpen;
+    gameDataArray[gameIndex].totalClose = totalClose;
 
-    spreadOpen = JSON.parse(gameDataArray[gameIndex]).spreadOpen;
-    spreadClose = JSON.parse(gameDataArray[gameIndex]).spreadOpen;
-    totalOpen = JSON.parse(gameDataArray[gameIndex]).totalOpen;
-    totalClose = JSON.parse(gameDataArray[gameIndex]).totalClose;
+    console.log(gameDataArray[gameIndex]);
 
     callback(); //callback inside request since that's the async part
 
