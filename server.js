@@ -5,9 +5,9 @@ var fs = require('fs');
 var request = require('request');
 var cheerio = require('cheerio');
 var app = express();
-var scoreboardScrape = require('./scoreboard-scrape')
+var scraper = require('./scraper')
 
-app.get('/scrape', scoreboardScrape);
+app.get('/scrape', scraper);
 
 app.listen('3000')
 
