@@ -1,0 +1,4 @@
+{
+  "predef": ["require", "module", "console"],
+  "node": true
+}
