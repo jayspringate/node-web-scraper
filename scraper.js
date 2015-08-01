@@ -8,24 +8,22 @@ var sequelize = require('sequelize');
 var async = require('async');
 var _ = require('lodash/array');
 
-//figure out a way to make this not global
-
-module.exports = function (req, res) {
+module.exports = function(req, res) {
 
   var gameDataArray = [];
 
-  var urlDate = '2015-02-22';  //to be used in url below
+  var urlDate = '2015-02-22'; //to be used in url below
 
   var scoreboardUrl = 'http://www.covers.com/Sports/NBA/Matchups?selectedDate=' + urlDate;
 
-  request(scoreboardUrl, scoreboardCallback); //function call
+  request(scoreboardUrl, scoreboardScrape); //function call
 
   res.send('See console');
 
   //begin function definitions
 
-  function scoreboardCallback (err, response, html) {
-    if(err) {
+  function scoreboardScrape(err, response, html) {
+    if (err) {
       console.log(err);
     }
 
@@ -37,154 +35,151 @@ module.exports = function (req, res) {
       eventIdArray.push($(this).attr('data-event-id'));
     });
 
-    fs.writeFile('data/event-id-array.js', eventIdArray, function (err){
+    fs.writeFile('data/event-id-array.js', eventIdArray, function(err) {});
+
+    fs.unlink('data/gameDataArray.js', function(err) {
+
     });
 
-    fs.unlink('data/gameDataArray.js', function (err) {
-
-    });
-
-    eventIdArray.forEach(function (element, index, array) {
+    eventIdArray.forEach(function(element, index, array) {
 
       $('div[data-event-id=' + element + ']').filter(function() {
 
-      var data = $(this);
+        var data = $(this);
 
-      var jsonRoad = {};
+        var jsonRoad = {};
 
-      var jsonHome = {};
+        var jsonHome = {};
 
-      jsonRoad.date = jsonHome.date = urlDate;
+        jsonRoad.date = jsonHome.date = urlDate;
 
-      jsonRoad.teamCourt = 'road';
+        jsonRoad.teamCourt = 'road';
 
-      jsonHome.teamCourt = 'home';
+        jsonHome.teamCourt = 'home';
 
-      var team = data.children().children('.cmg_team_name').first().contents().filter(function() {
-        return this.nodeType == 3;
-      }).text().trim();
+        var team = data.children().children('.cmg_team_name').first().contents().filter(function() {
+          return this.nodeType == 3;
+        }).text().trim();
 
-      jsonRoad.team = team;
+        jsonRoad.team = team;
 
-      var opponent = data.children().children('.cmg_team_name').last().contents().filter(function() {
-        return this.nodeType == 3;
-      }).text().trim();
+        var opponent = data.children().children('.cmg_team_name').last().contents().filter(function() {
+          return this.nodeType == 3;
+        }).text().trim();
 
-      jsonRoad.opponent = opponent;
+        jsonRoad.opponent = opponent;
 
-      var teamScore = parseInt(data.children().children().children('.cmg_matchup_list_score_away').text());
+        var teamScore = parseInt(data.children().children().children('.cmg_matchup_list_score_away').text());
 
-      jsonRoad.teamScore = teamScore;
+        jsonRoad.teamScore = teamScore;
 
-      var opponentScore = parseInt(data.children().children().children('.cmg_matchup_list_score_home').text());
+        var opponentScore = parseInt(data.children().children().children('.cmg_matchup_list_score_home').text());
 
-      jsonRoad.opponentScore = opponentScore;
+        jsonRoad.opponentScore = opponentScore;
 
-      jsonHome.team = opponent;
+        jsonHome.team = opponent;
 
-      jsonHome.opponent = team;
+        jsonHome.opponent = team;
 
-      jsonHome.teamScore = opponentScore;
+        jsonHome.teamScore = opponentScore;
 
-      jsonHome.opponentScore = teamScore;
+        jsonHome.opponentScore = teamScore;
 
-      jsonRoad.eventId = jsonHome.eventId = parseInt(element);
+        jsonRoad.eventId = jsonHome.eventId = parseInt(element);
 
-      gameDataArray.push(jsonRoad, jsonHome);
+        gameDataArray.push(jsonRoad, jsonHome);
 
-    })
+      });
 
-  })
+    });
 
-  function lineHistoryCallback(arr) {
+    function lineHistoryScrape(arr) {
 
-    function logArray(item, callback) {//item here refers to eventIdArray
+      function lineHistoryRequests(item, callback) { //item here refers to eventIdArray
 
-      var lineHistoryUrl = 'http://www.covers.com/odds/linehistory.aspx?eventId=' + item + '&sport=NBA';
+        var lineHistoryUrl = 'http://www.covers.com/odds/linehistory.aspx?eventId=' + item + '&sport=NBA';
 
-      request(lineHistoryUrl, function (err, response, html) {
-      if(err) {
-        console.log(err);
+        request(lineHistoryUrl, function(err, response, html) {
+          if (err) {
+            console.log(err);
+          }
+
+          var $$ = cheerio.load(html);
+
+          var selectorArray = [];
+          var resultArray = [];
+
+          var spreadOpenSelector = $$('a[href*="269"]').parent().parent().next().children().eq(1); //269 is the ID for Bookmaker
+
+          var totalOpenSelector = $$('a[href*="269"]').parent().parent().next().children().last();
+
+          var spreadCloseSelector = $$('a[href*="761"]').parent().parent().prev().children().eq(1); //761 is the ID of the book  following BookMaker
+
+          var totalCloseSelector = $$('a[href*="761"]').parent().parent().prev().children().last();
+
+          selectorArray.push(spreadOpenSelector, spreadCloseSelector, totalOpenSelector, totalCloseSelector);
+
+          function totalOpenSelectorTest() {
+            if (totalOpenSelector.text() === 'OFF') {
+              totalOpenSelector = totalOpenSelector.parent().next().children().last();
+              totalOpenSelectorTest();
+            }
+          }
+
+          function spreadOpenSelectorTest() {
+            if (spreadOpenSelector.text() === 'OFF') {
+              spreadOpenSelector = spreadOpenSelector.parent().next().children.eq(2);
+              spreadOpenSelectorTest();
+            }
+          }
+
+          totalOpenSelectorTest(); //function call
+          spreadOpenSelectorTest(); //function call
+
+          var spreadOpen = parseInt(spreadOpenSelector.text().split('/')[0]);
+          var totalOpen = parseInt(totalOpenSelector.text().split('-')[0]);
+          var spreadClose = parseInt(spreadCloseSelector.text().split('/')[0]);
+          var totalClose = parseInt(totalCloseSelector.text().split('-')[0]);
+
+          resultArray.push(item, spreadOpen, spreadClose, totalOpen, totalClose);
+
+          console.log(resultArray);
+
+          var gameIndex = _.findIndex(gameDataArray, function(chr) {
+            return ((chr.teamCourt == 'home') && (chr.eventId == item));
+          });
+
+          gameDataArray[gameIndex].spreadOpen = spreadOpen;
+          gameDataArray[gameIndex].spreadClose = spreadClose;
+          gameDataArray[gameIndex].totalOpen = totalOpen;
+          gameDataArray[gameIndex].totalClose = totalClose;
+
+          console.log(gameDataArray[gameIndex]);
+
+          gameIndex = _.findIndex(gameDataArray, function(chr) {
+            return chr.teamCourt == 'road' && chr.eventId == item;
+          });
+
+          gameDataArray[gameIndex].spreadOpen = -spreadOpen;
+          gameDataArray[gameIndex].spreadClose = -spreadClose;
+          gameDataArray[gameIndex].totalOpen = totalOpen;
+          gameDataArray[gameIndex].totalClose = totalClose;
+
+          console.log(gameDataArray[gameIndex]);
+
+          callback(); //callback inside request since that's the async part
+
+        });
       }
 
-      var $$ = cheerio.load(html);
+      async.eachSeries(arr, lineHistoryRequests); //function call
 
-      var selectorArray = [];
-      var resultArray = [];
+      console.log('Data successfully scraped');
+    }
 
-      var spreadOpenSelector = $$('a[href*="269"]').parent().parent().next().children().eq(1); //269 is the ID for Bookmaker
-
-      var totalOpenSelector = $$('a[href*="269"]').parent().parent().next().children().last();
-
-      var spreadCloseSelector = $$('a[href*="761"]').parent().parent().prev().children().eq(1); //761 is the ID of the book  following BookMaker
-
-      var totalCloseSelector = $$('a[href*="761"]').parent().parent().prev().children().last();
-
-      selectorArray.push(spreadOpenSelector, spreadCloseSelector, totalOpenSelector, totalCloseSelector);
-
-      function totalOpenSelectorTest () {
-        if (totalOpenSelector.text() === 'OFF') {
-          totalOpenSelector = totalOpenSelector.parent().next().children().last();
-            totalOpenSelectorTest();
-          }
-      };
-
-      function spreadOpenSelectorTest () {
-        if (spreadOpenSelector.text() === 'OFF') {
-          spreadOpenSelector = spreadOpenSelector.parent().next().children.eq(2);
-            spreadOpenSelectorTest();
-          }
-      };
-
-      totalOpenSelectorTest(); //function call
-      spreadOpenSelectorTest(); //function call
-
-      var spreadOpen = parseInt(spreadOpenSelector.text().split('/')[0]);
-      var totalOpen = parseInt(totalOpenSelector.text().split('-')[0]);
-      var spreadClose = parseInt(spreadCloseSelector.text().split('/')[0]);
-      var totalClose = parseInt(totalCloseSelector.text().split('-')[0]);
-
-      resultArray.push(item, spreadOpen, spreadClose, totalOpen, totalClose);
-
-     console.log(resultArray);
-
-    var gameIndex = _.findIndex(gameDataArray, function(chr) {
-      return ((chr.teamCourt == 'home') && (chr.eventId == item));
-    });
-
-    gameDataArray[gameIndex].spreadOpen = spreadOpen;
-    gameDataArray[gameIndex].spreadClose = spreadClose;
-    gameDataArray[gameIndex].totalOpen = totalOpen;
-    gameDataArray[gameIndex].totalClose = totalClose;
-
-    console.log(gameDataArray[gameIndex]);
-
-    gameIndex =_.findIndex(gameDataArray, function(chr) {
-      return chr.teamCourt == 'road' && chr.eventId == item;
-    });
-
-    gameDataArray[gameIndex].spreadOpen = -spreadOpen;
-    gameDataArray[gameIndex].spreadClose = -spreadClose;
-    gameDataArray[gameIndex].totalOpen = totalOpen;
-    gameDataArray[gameIndex].totalClose = totalClose;
-
-    console.log(gameDataArray[gameIndex]);
-
-    callback(); //callback inside request since that's the async part
-
-  })
-
+    lineHistoryScrape(eventIdArray); //function call
   }
-
-    async.eachSeries(arr, logArray); //function call
-
-    console.log('Data successfully scraped');
-  }
-
-  lineHistoryCallback(eventIdArray); //function call
-
-  }
-}
+};
 
 
 
