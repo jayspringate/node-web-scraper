@@ -1,9 +1,13 @@
 'use strict';
 
-var fs = require('fs');
 var request = require('request');
 var cheerio = require('cheerio');
-var sequelize = require('sequelize');
+var Game = require('./models/Game');
+var Sql = require('sequelize');
+var sql = new Sql('wagermetrics_dev', 'wagermetrics_dev',
+  'prince', {
+  dialect: 'postgres'
+});
 var async = require('async');
 var _ = require('lodash/array');
 
@@ -11,7 +15,7 @@ module.exports = function(req, res) {
 
   var gameDataArray = [];
 
-  var urlDate = '2015-02-22';
+  var urlDate = '2015-02-23';
 
   var scoreboardUrl = 'http://www.covers.com/Sports/NBA/Matchups?selectedDate=' + urlDate;
 
@@ -30,12 +34,6 @@ module.exports = function(req, res) {
 
     $('.cmg_matchup_game_box').each(function() {
       eventIdArray.push($(this).attr('data-event-id'));
-    });
-
-    fs.writeFile('data/event-id-array.js', eventIdArray, function(err) {});
-
-    fs.unlink('data/gameDataArray.js', function(err) {
-
     });
 
     eventIdArray.forEach(function(element, index, array) {
@@ -133,10 +131,10 @@ module.exports = function(req, res) {
           totalOpenSelectorTest(); //function call
           spreadOpenSelectorTest(); //function call
 
-          var spreadOpen = parseInt(spreadOpenSelector.text().split('/')[0]);
-          var totalOpen = parseInt(totalOpenSelector.text().split('-')[0]);
-          var spreadClose = parseInt(spreadCloseSelector.text().split('/')[0]);
-          var totalClose = parseInt(totalCloseSelector.text().split('-')[0]);
+          var spreadOpen = parseFloat(spreadOpenSelector.text().split('/')[0]);
+          var totalOpen = parseFloat(totalOpenSelector.text().split('-')[0]);
+          var spreadClose = parseFloat(spreadCloseSelector.text().split('/')[0]);
+          var totalClose = parseFloat(totalCloseSelector.text().split('-')[0]);
 
           resultArray.push(item, spreadOpen, spreadClose, totalOpen, totalClose);
 
@@ -153,6 +151,8 @@ module.exports = function(req, res) {
 
           console.log(gameDataArray[gameIndex]);
 
+          Game.create(gameDataArray[gameIndex]); //writing to db
+
           gameIndex = _.findIndex(gameDataArray, function(chr) {
             return chr.teamCourt == 'road' && chr.eventId == item;
           });
@@ -163,6 +163,8 @@ module.exports = function(req, res) {
           gameDataArray[gameIndex].totalClose = totalClose;
 
           console.log(gameDataArray[gameIndex]);
+
+          Game.create(gameDataArray[gameIndex]); //writing to db
 
           callback(); //callback inside request since that's the async part
 
