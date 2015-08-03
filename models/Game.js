@@ -6,16 +6,16 @@ var sql = new Sql('wagermetrics_dev', 'wagermetrics_dev',
 
 var Game = module.exports = sql.define ('Game', {
   date: Sql.DATEONLY,
-  eventId: Sql.NUMBER,
+  eventId: Sql.FLOAT,
   team: Sql.STRING,
   opponent: Sql.STRING,
   teamCourt: Sql.STRING,
-  teamScore: Sql.NUMBER,
-  opponentScore: Sql.NUMBER,
-  spreadOpen: Sql.NUMBER,
-  spreadClose: Sql.NUMBER,
-  totalOpen: Sql.NUMBER,
-  totalClose: Sql.NUMBER
+  teamScore: Sql.FLOAT,
+  opponentScore: Sql.FLOAT,
+  spreadOpen: Sql.FLOAT,
+  spreadClose: Sql.FLOAT,
+  totalOpen: Sql.FLOAT,
+  totalClose: Sql.FLOAT
 });
 
 Game.sync();

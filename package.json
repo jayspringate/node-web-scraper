@@ -27,10 +27,13 @@
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-watch": "^0.6.1",
-    "mocha": "^2.2.4"
+    "mocha": "^2.2.4",
+    "superagent": "^1.2.0",
+    "superagent-cli": "^2.0.0"
   },
   "dependencies": {
     "async": "^1.3.0",
+    "body-parser": "^1.13.3",
     "cheerio": "^0.19.0",
     "express": "^4.12.3",
     "lodash": "^3.10.0",
