@@ -1,6 +1,5 @@
 'use strict';
 
-var express = require('express');
 var fs = require('fs');
 var request = require('request');
 var cheerio = require('cheerio');
@@ -12,15 +11,13 @@ module.exports = function(req, res) {
 
   var gameDataArray = [];
 
-  var urlDate = '2015-02-22'; //to be used in url below
+  var urlDate = '2015-02-22';
 
   var scoreboardUrl = 'http://www.covers.com/Sports/NBA/Matchups?selectedDate=' + urlDate;
 
-  request(scoreboardUrl, scoreboardScrape); //function call
+  request(scoreboardUrl, scoreboardScrape);
 
   res.send('See console');
-
-  //begin function definitions
 
   function scoreboardScrape(err, response, html) {
     if (err) {
