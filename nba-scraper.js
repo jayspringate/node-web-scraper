@@ -13,13 +13,21 @@ var _ = require('lodash/array');
 
 module.exports = function(req, res) {
 
-  var gameDataArray = [];
+  // var startDate = '11-29-2014';
+  // var endDate = '12-1-2014';
 
-  var urlDate = '2015-02-23';
+  var urlDate = '2014-12-25';
 
-  var scoreboardUrl = 'http://www.covers.com/Sports/NBA/Matchups?selectedDate=' + urlDate;
+  // for (var urlDate = new Date(startDate); urlDate <= new Date(endDate); urlDate.setDate(urlDate.getDate() + 1)) {
 
-  request(scoreboardUrl, scoreboardScrape);
+    // var scoreboardUrl = 'http://www.covers.com/Sports/NBA/Matchups?selectedDate=' + urlDate.getFullYear().toString() +
+    // '-' + (urlDate.getMonth() + 1).toString() + '-' + urlDate.getDate().toString();
+
+    var scoreboardUrl = 'http://www.covers.com/Sports/NBA/Matchups?selectedDate=' + urlDate;
+
+    request(scoreboardUrl, scoreboardScrape); //function call inside date loop
+
+  // }
 
   res.send('See console');
 
@@ -27,6 +35,8 @@ module.exports = function(req, res) {
     if (err) {
       console.log(err);
     }
+
+    var gameDataArray = [];
 
     var $ = cheerio.load(html);
 
