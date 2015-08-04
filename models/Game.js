@@ -6,7 +6,9 @@ var sql = new Sql('wagermetrics_dev', 'wagermetrics_dev',
 
 var Game = module.exports = sql.define ('Game', {
   date: Sql.DATEONLY,
-  eventId: Sql.FLOAT,
+  eventId: {type: Sql.STRING,
+            unique: true
+          },
   team: Sql.STRING,
   opponent: Sql.STRING,
   teamCourt: Sql.STRING,
