@@ -20,6 +20,11 @@ var Game = module.exports = sql.define ('Game', {
   totalClose: Sql.FLOAT,
   season: Sql.STRING,
   gameType: Sql.STRING
+},
+
+{
+  timestamps: false,
+  tableName: 'Games1415'
 });
 
 Game.sync();
