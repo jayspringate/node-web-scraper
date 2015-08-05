@@ -4,7 +4,7 @@ var Sql = require('sequelize');
 var sql = new Sql('wagermetrics_dev', 'wagermetrics_dev',
   'prince', {dialect: 'postgres'});
 
-var Game = module.exports = sql.define ('Game', {
+var GameTest = module.exports = sql.define ('GameTest', {
   date: Sql.DATEONLY,
   eventId: {type: Sql.STRING,
             unique: true
@@ -20,6 +20,11 @@ var Game = module.exports = sql.define ('Game', {
   totalClose: Sql.FLOAT,
   season: Sql.STRING,
   gameType: Sql.STRING
+},
+
+{
+  timestamps: false,
+  tableName: 'GamesTest'
 });
 
-Game.sync();
+GameTest.sync();

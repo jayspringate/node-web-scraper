@@ -21,17 +21,20 @@ module.exports = function(req, res) {
 
           var begin = '2015,2,19'; //commas due to time zone issue
           var end = '2015,4,15';
+          var gameType = 'reg';
+          var season = '2014-15';
+
           var dateArray = [];
 
           for (var d = new Date(begin); d <= new Date(end); d.setDate(d.getDate() + 1)) {
             dateArray.push(new Date(d));
           }
 
-          callback(null, dateArray);
+          callback(null, dateArray, gameType, season);
 
         },
 
-        function scoreboardScrape(dateArray, callback) {
+        function scoreboardScrape(dateArray, gameType, season, callback) {
 
           async.eachSeries(dateArray, function scoreboardRequest(item, asyncCallback) {
 
@@ -65,10 +68,13 @@ module.exports = function(req, res) {
 
                   var jsonHome = {};
 
-                  jsonRoad.date = jsonHome.date = urlDate;
-
+                  jsonRoad.date = urlDate;
+                  jsonHome.date = urlDate;
+                  jsonRoad.gameType = gameType;
+                  jsonHome.gameType = gameType;
+                  jsonRoad.season = season;
+                  jsonHome.season = season;
                   jsonRoad.teamCourt = 'road';
-
                   jsonHome.teamCourt = 'home';
 
                   var team = data.children().children('.cmg_team_name').first().contents().filter(function() {
@@ -136,21 +142,13 @@ module.exports = function(req, res) {
 
               var totalOpenSelector = $$('a[href*="269"]').parent().parent().next().children().last();
 
-              var spreadCloseSelector = $$('a[href*="761"]').parent().parent().prev().children().eq(1); //761 is the ID of the book  following BookMaker
+              var spreadCloseSelector = $$('a[href*="761"]').parent().parent().prev().children().eq(1); //761 is the ID of the book following BookMaker
 
               var totalCloseSelector = $$('a[href*="761"]').parent().parent().prev().children().last();
 
-              totalOpenSelectorTest(); //function call
-              spreadOpenSelectorTest(); //function call
-
-              var spreadOpen = parseFloat(spreadOpenSelector.text().split('/')[0]);
-              var totalOpen = parseFloat(totalOpenSelector.text().split('-')[0]);
-              var spreadClose = parseFloat(spreadCloseSelector.text().split('/')[0]);
-              var totalClose = parseFloat(totalCloseSelector.text().split('-')[0]);
-
               function totalOpenSelectorTest() {
-                if (totalOpenSelector.text() === 'OFF') {
-                  console.log("EVENTID = " + item);
+                if (totalOpenSelector.text() === 'OFF' || totalOpenSelector.text().split('-')[0].length > 5) {
+                  console.log("OFF TEST FAIL - EVENTID = " + item);
                   totalOpenSelector = totalOpenSelector.parent().next().children().last();
                   totalOpenSelectorTest();
                 }
@@ -159,17 +157,25 @@ module.exports = function(req, res) {
               totalOpenSelectorTest();
 
               function spreadOpenSelectorTest() {
-                if (spreadOpenSelector.text() === 'OFF') {
+                if (spreadOpenSelector.text() === 'OFF' || spreadOpenSelector.text().split('/')[0].length > 5) {
                   console.log("OFF TEST FAIL - EVENTID = " + item);
-                  spreadOpenSelector = spreadOpenSelector.parent().next().children().eq(2);
+                  spreadOpenSelector = spreadOpenSelector.parent().next().children().eq(1);
                   spreadOpenSelectorTest();
                 }
               }
 
               spreadOpenSelectorTest();
 
+              var spreadOpen = parseFloat(spreadOpenSelector.text().split('/')[0]);
+              var totalOpen = parseFloat(totalOpenSelector.text().split('-')[0]);
+              var spreadClose = parseFloat(spreadCloseSelector.text().split('/')[0]);
+              var totalClose = parseFloat(totalCloseSelector.text().split('-')[0]);
+
               function numberTestAndWrite() {
-                if (typeof spreadOpen != 'number' || typeof spreadClose != 'number' || typeof totalOpen != 'number' || typeof totalClose != 'number') {
+                if (isNaN(spreadOpen) === true ||
+                    isNaN(spreadClose) === true ||
+                    isNaN(totalOpen) === true ||
+                    isNaN(totalClose) === true) {
                   console.log('initially NaN, rerunning...EVENTID = ' + item);
                   lineHistoryRequests(item, callback);
                 } else {
@@ -182,7 +188,7 @@ module.exports = function(req, res) {
                   gameDataArray[gameIndex].totalOpen = totalOpen;
                   gameDataArray[gameIndex].totalClose = totalClose;
 
-                  console.log(gameDataArray[gameIndex]);
+                  // console.log(gameDataArray[gameIndex]);
 
                   Game.create(gameDataArray[gameIndex]); //writing to db
 
@@ -195,7 +201,7 @@ module.exports = function(req, res) {
                   gameDataArray[gameIndex].totalOpen = totalOpen;
                   gameDataArray[gameIndex].totalClose = totalClose;
 
-                  console.log(gameDataArray[gameIndex]);
+                  // console.log(gameDataArray[gameIndex]);
 
                   Game.create(gameDataArray[gameIndex]);
                 }
