@@ -19,10 +19,10 @@ module.exports = function(req, res) {
 
         function dateLoop(callback) {
 
-          var begin = '2015,2,19'; //commas due to time zone issue
-          var end = '2015,4,15';
+          var begin = '2013,10,29';
+          var end = '2014,2,13';
           var gameType = 'reg';
-          var season = '2014-15';
+          var season = '2013-14';
 
           var dateArray = [];
 
