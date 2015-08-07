@@ -2,10 +2,10 @@
 
 module.exports = function dateLoop(callback) {
 
-  var begin = '2013,2,19';
-  var end = '2013,4,17';
-  var gameType = 'reg';
-  var season = '2012-13'; //experiment with exporting table name to model
+  var begin = '2015,4,18';
+  var end = '2015,6,16';
+  var gameType = 'playoff';
+  var season = '2014-15'; //experiment with exporting table name to model
 
   var dateArray = [];
 
