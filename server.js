@@ -4,7 +4,7 @@ var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
 var app = express();
-var nbaScraper = require('./nba-scraper');
+var nbaScraper = require('./nba/nba-scraper');
 
 app.get('/nbascrape', nbaScraper);
 
