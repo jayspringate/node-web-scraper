@@ -33,14 +33,14 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
         $('div[data-event-id=' + element + ']').filter(function() {
 
-          var data = $(this);
-
           var jsonRoad = {};
 
           var jsonHome = {};
 
-          jsonRoad.date = urlDate;
-          jsonHome.date = urlDate;
+          var data = $(this);
+
+          jsonRoad.date = data.attr('data-game-date').split(' ')[0];
+          jsonHome.date = data.attr('data-game-date').split(' ')[0];
           jsonRoad.gameType = gameType;
           jsonHome.gameType = gameType;
           jsonRoad.season = season;
