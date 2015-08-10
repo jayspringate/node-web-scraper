@@ -26,10 +26,15 @@
     "chai-http": "^1.0.0",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^0.8.0",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-webpack": "^1.0.11",
     "mocha": "^2.2.4",
     "superagent": "^1.2.0",
-    "superagent-cli": "^2.0.0"
+    "superagent-cli": "^2.0.0",
+    "webpack": "^1.11.0",
+    "webpack-dev-server": "^1.10.1"
   },
   "dependencies": {
     "async": "^1.3.0",
