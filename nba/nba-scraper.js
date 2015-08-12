@@ -3,7 +3,7 @@
 var Game = require('../models/Game');
 var Sql = require('sequelize');
 var sql = new Sql('wagermetrics_dev', 'wagermetrics_dev',
-  'prince', {
+  'passwordGoesHere', {  //password intentionally omitted
     dialect: 'postgres'
   });
 var async = require('async');
