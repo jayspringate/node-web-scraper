@@ -14,7 +14,7 @@ module.exports =
 
     async.eachSeries(eventIdArray, function lineHistoryRequests(item, asyncCallback) { //item here refers to eventIdArray
 
-      var lineHistoryUrl = 'http://www.covers.com/odds/linehistory.aspx?eventId=' + item + '&sport=NBA';
+      var lineHistoryUrl = 'beginUrlGoesHere' + item + '&sport=NBA';  //actual url intentionally omitted
 
       request(lineHistoryUrl, function(err, response, html) {
         if (err) {
