@@ -1,11 +1,5 @@
 'use strict';
 
-var Game = require('../models/Game');
-var Sql = require('sequelize');
-var sql = new Sql('wagermetrics_dev', 'wagermetrics_dev',
-  'passwordGoesHere', {  //password intentionally omitted
-    dialect: 'postgres'
-  });
 var async = require('async');
 var dateLoop = require('./date-loop');
 var scoreboardScrape = require('./scoreboard-scrape');
