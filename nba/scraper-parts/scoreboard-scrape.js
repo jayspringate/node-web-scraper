@@ -81,7 +81,6 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
           gameDataArray.push(jsonRoad, jsonHome);
 
         });
-
       });
 
       asyncCallback();
@@ -89,7 +88,5 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
       callback(null, eventIdArray, gameDataArray);
 
     });
-
   });
-
 };
