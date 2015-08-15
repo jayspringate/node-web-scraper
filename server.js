@@ -6,8 +6,8 @@ var nbaScraper = require('./nba/nba-scraper');
 
 app.get('/nbascrape', nbaScraper);
 
-app.listen('3000');
-
-console.log('server listening on port 3000');
+app.listen('3000', function() {
+  console.log('server listening on port 3000');
+});
 
 module.exports = app;
