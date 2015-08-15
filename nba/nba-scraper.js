@@ -1,9 +1,9 @@
 'use strict';
 
 var async = require('async');
-var dateLoop = require('./date-loop');
-var scoreboardScrape = require('./scoreboard-scrape');
-var lineHistoryScrape = require('./line-history-scrape');
+var dateLoop = require('./scraper-parts/date-loop');
+var scoreboardScrape = require('./scraper-parts/scoreboard-scrape');
+var lineHistoryScrape = require('./scraper-parts/line-history-scrape');
 
 module.exports = function(req, res) {
 
