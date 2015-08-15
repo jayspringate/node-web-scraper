@@ -14,7 +14,7 @@ module.exports =
 
     async.eachSeries(eventIdArray, function lineHistoryRequests(item, asyncCallback) { //item here refers to eventIdArray
 
-      var lineHistoryUrl = 'beginUrlGoesHere' + item + '&sport=NBA';  //actual url intentionally omitted
+      var lineHistoryUrl = 'http://www.covers.com/odds/linehistory.aspx?eventId=' + item + '&sport=NBA';  //actual url intentionally omitted
 
       request(lineHistoryUrl, function(err, response, html) {
         if (err) {
@@ -56,23 +56,9 @@ module.exports =
         var spreadClose = parseFloat(spreadCloseSelector.text().split('/')[0]);
         var totalClose = parseFloat(totalCloseSelector.text().split('-')[0]);
 
-        function numberTestAndWrite() {
-          if ((isNaN(spreadOpen) === true ||
-               isNaN(spreadClose) === true ||
-               isNaN(totalOpen) === true ||
-               isNaN(totalClose) === true) && count === 0) {
-            console.log('initially NaN, rerunning...EVENTID = ' + item);
-            lineHistoryRequests(item, callback);
-            count++;
-          } else if ((isNaN(spreadOpen) === true ||
-            isNaN(spreadClose) === true ||
-            isNaN(totalOpen) === true ||
-            isNaN(totalClose) === true) && count === 2) {
-            spreadClose = spreadOpen;
-            totalClose = totalOpen;
-          } else {
-            var gameIndex = _.findIndex(gameDataArray, function(chr) {
-              return ((chr.teamCourt == 'home') && (chr.eventId == item + '-h'));
+        function dbWrite () {
+          var gameIndex = _.findIndex(gameDataArray, function(chr) {
+            return ((chr.teamCourt == 'home') && (chr.eventId == item + '-h'));
             });
 
             gameDataArray[gameIndex].spreadOpen = spreadOpen;
@@ -80,7 +66,59 @@ module.exports =
             gameDataArray[gameIndex].totalOpen = totalOpen;
             gameDataArray[gameIndex].totalClose = totalClose;
 
-            // console.log(gameDataArray[gameIndex]);
+            function atsGrade (arr, i) {
+              if ((arr[i].teamScore + arr[i].spreadClose) > arr[i].opponentScore) {
+                arr[i].atsGrade = 'W';
+              } else if ((arr[i].teamScore + arr[i].spreadClose) < arr[i].opponentScore) {
+                  arr[i].atsGrade = 'L';
+              } else {
+                  arr[i].atsGrade = 'P';
+              }
+            }
+
+            function suGrade (arr, i) {
+              if (arr[i].teamScore > arr[i].opponentScore) {
+                arr[i].suGrade = 'W';
+              } else {
+                  arr[i].suGrade = 'L';
+              }
+            }
+
+            function totalGrade (arr, i) {
+              if ((arr[i].teamScore + arr[i].opponentScore) > totalClose) {
+                arr[i].totalGrade = 'O';
+              } else if ((arr[i].teamScore + arr[i].opponentScore) < totalClose) {
+                arr[i].totalGrade = 'U';
+              } else {
+                arr[i].totalGrade = 'P';
+              }
+            }
+
+            function spreadMove (arr, i) {
+              if (arr[i].spreadClose < arr[i].spreadOpen) {
+                arr[i].spreadMove = 'FOR';
+              } else if (arr[i].spreadClose > arr[i].spreadOpen) {
+                arr[i].spreadMove = 'AGAINST';
+              } else {
+                arr[i].spreadMove = 'NONE';
+              }
+            }
+
+            function totalMove (arr, i) {
+              if (arr[i].totalClose < arr[i].totalOpen) {
+                arr[i].totalMove = 'DOWN';
+              } else if (arr[i].totalClose > arr[i].totalOpen) {
+                arr[i].totalMove = 'UP';
+              } else {
+                arr[i].totalMove = 'NONE';
+              }
+            }
+
+            atsGrade(gameDataArray, gameIndex);
+            suGrade(gameDataArray, gameIndex);
+            totalGrade(gameDataArray, gameIndex);
+            spreadMove(gameDataArray, gameIndex);
+            totalMove(gameDataArray, gameIndex);
 
             Game.create(gameDataArray[gameIndex]); //writing to db
 
@@ -93,13 +131,36 @@ module.exports =
             gameDataArray[gameIndex].totalOpen = totalOpen;
             gameDataArray[gameIndex].totalClose = totalClose;
 
-            // console.log(gameDataArray[gameIndex]);
+            atsGrade(gameDataArray, gameIndex);
+            suGrade(gameDataArray, gameIndex);
+            totalGrade(gameDataArray, gameIndex);
+            spreadMove(gameDataArray, gameIndex);
+            totalMove(gameDataArray, gameIndex);
 
-            Game.create(gameDataArray[gameIndex]);
+            Game.create(gameDataArray[gameIndex]); //writing to db
+        }
+
+        function numberTest() {
+          if ((isNaN(spreadOpen) === true ||
+               isNaN(spreadClose) === true ||
+               isNaN(totalOpen) === true ||
+               isNaN(totalClose) === true) && count < 2) {
+            console.log('initially NaN, rerunning...EVENTID = ' + item);
+            count++;
+            lineHistoryRequests(item, callback);
+          } else if ((isNaN(spreadOpen) === true ||
+            isNaN(spreadClose) === true ||
+            isNaN(totalOpen) === true ||
+            isNaN(totalClose) === true) && count === 2) {
+            spreadClose = spreadOpen;
+            totalClose = totalOpen;
+            dbWrite();
+          } else {
+            dbWrite();
           }
         }
 
-        numberTestAndWrite();
+        numberTest();
 
         asyncCallback(); //callback inside request since that's the async part
 
