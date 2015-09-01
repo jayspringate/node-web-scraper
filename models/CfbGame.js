@@ -4,7 +4,7 @@ var Sql = require('sequelize');
 var sql = new Sql(process.env.PGDATABASE, process.env.PGUSER,
   process.env.PGPASSWORD, {dialect: 'postgres'});
 
-var cfbGame = module.exports = sql.define ('cfbGame', {
+var Game = module.exports = sql.define ('Game', {
   date: Sql.DATEONLY,
   eventId: {type: Sql.STRING,
             unique: true,
@@ -14,9 +14,13 @@ var cfbGame = module.exports = sql.define ('cfbGame', {
   opponent: Sql.STRING,
   site: Sql.STRING,
   stadium: Sql.STRING,
+  teamDivision: Sql.STRING,
+  opponentDivision: Sql.STRING,
   teamConference: Sql.STRING,
   opponentConference: Sql.STRING,
   gameConference: Sql.STRING,
+  teamConsensus: Sql.FLOAT,
+  opponentConsensus: Sql.FLOAT,
   teamScore: Sql.FLOAT,
   opponentScore: Sql.FLOAT,
   spreadOpen: Sql.FLOAT,
@@ -36,7 +40,7 @@ var cfbGame = module.exports = sql.define ('cfbGame', {
 
 {
   timestamps: false,
-  tableName: 'CfbGamesTestcd'
+  tableName: 'CfbGamesTest'
 });
 
-cfbGame.sync();
+Game.sync();

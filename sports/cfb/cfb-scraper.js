@@ -5,6 +5,7 @@ var cfbDateLoop = require('./scraper-parts/cfb-date-loop');
 var cfbScoreboardScrape = require('./scraper-parts/cfb-scoreboard-scrape');
 var cfbBoxScoreScrape = require('./scraper-parts/cfb-box-score-scrape');
 var cfbLineHistoryScrape = require('./scraper-parts/cfb-line-history-scrape');
+var cfbConsensusScrape = require('./scraper-parts/cfb-consensus-scrape');
 
 module.exports = function(req, res) {
 
@@ -12,6 +13,7 @@ module.exports = function(req, res) {
       cfbDateLoop,
       cfbScoreboardScrape,
       cfbBoxScoreScrape,
+      cfbConsensusScrape,
       cfbLineHistoryScrape
     ],
 

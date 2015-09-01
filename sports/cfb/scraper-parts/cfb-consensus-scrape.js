@@ -7,24 +7,21 @@ var _ = require('lodash/array');
 
 module.exports =
 
-  function boxScoreScrape(eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose, callback) {
+  function consensusScrape(eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose, callback) {
 
-    async.eachSeries(eventIdArray, function boxScoreRequests(item, asyncCallback) { //item here refers to eventIdArray
+   async.eachSeries(eventIdArray, function consensusRequests(item, asyncCallback) { //item here refers to eventIdArray
 
-      var boxScoreUrl = 'http://www.covers.com/pageLoader/pageLoader.aspx?page=/data/ncf/results/2012-2013/boxscore' + item + '.html'; //actual url intentionally omitted
+      var consensusUrl = 'http://contests.covers.com/Handicapping/ConsensusPick/consensus-pick.aspx?sport=NCAAF&eventId=' + item; //actual url intentionally omitted
 
-      request(boxScoreUrl, function(err, response, html) {
+      request(consensusUrl, function(err, response, html) {
         if (err) {
           console.log(err);
         }
 
         var $ = cheerio.load(html);
 
-        var stadiumSelector = $('div[class="row"]').last().text().split(' - ')[2].split('  ')[0];
-
-        var daySelector = $('div[class="row"]').last().text().split(' - ')[1].split(',')[0];
-
-        var attendanceSelector = $('div[class="row"]').last().text().split(' - ')[3].trim();
+        var roadConsensusSelector = $('table[class="match-logos"]').children().children().children().eq(1).text().split('%')[0];
+        var homeConsensusSelector = $('table[class="match-logos"]').children().children().children().eq(3).text().split('%')[0];
 
         // function totalOpenSelectorTest() {
         //   if (totalOpenSelector.text() === 'OFF' || totalOpenSelector.text().split('-')[0].length > 5) {
@@ -45,26 +42,24 @@ module.exports =
         // totalOpenSelectorTest();
         // spreadOpenSelectorTest();
 
-        var stadium = stadiumSelector;
-        var dayOfWeek = daySelector;
-        var attendance = parseInt(attendanceSelector);
+        var homeConsensus = Math.round(parseFloat(homeConsensusSelector));
+        var roadConsensus = Math.round(parseFloat(roadConsensusSelector));
+
 
         function findMatch() {
           var gameIndex = _.findIndex(gameDataArray, function(chr) {
             return chr.site == 'home' && chr.eventId == item + '-h';
           });
 
-          gameDataArray[gameIndex].stadium = stadium;
-          gameDataArray[gameIndex].dayOfWeek = dayOfWeek;
-          gameDataArray[gameIndex].attendance = attendance;
+          gameDataArray[gameIndex].teamConsensus = homeConsensus;
+          gameDataArray[gameIndex].opponentConsensus = roadConsensus;
 
           gameIndex = _.findIndex(gameDataArray, function(chr) {
             return chr.site == 'road' && chr.eventId == item + '-r';
           });
 
-          gameDataArray[gameIndex].stadium = stadium;
-          gameDataArray[gameIndex].dayOfWeek = dayOfWeek;
-          gameDataArray[gameIndex].attendance = attendance;
+          gameDataArray[gameIndex].teamConsensus = roadConsensus;
+          gameDataArray[gameIndex].opponentConsensus = homeConsensus;
         }
 
         findMatch();

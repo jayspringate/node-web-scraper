@@ -49,17 +49,36 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
           jsonRoad.site = 'road';
           jsonHome.site = 'home';
 
-          var team = data.children().children('.cmg_team_name').first().contents().filter(function() {
+          var team = $('.cmg_team_name').first().contents().filter(function() {
             return this.nodeType == 3;
           }).text().trim();
 
           jsonRoad.team = team;
 
-          var opponent = data.children().children('.cmg_team_name').last().contents().filter(function() {
+          var opponent = $('.cmg_team_name').last().contents().filter(function() {
             return this.nodeType == 3;
           }).text().trim();
 
           jsonRoad.opponent = opponent;
+
+          var homeDivision, roadDivision;
+
+          if ($('.cmg_team_logo').eq(0).children().attr('childElementCount') === 0) {
+            roadDivision = 'FCS';
+          } else {
+            roadDivision = 'FBS';
+          }
+
+          if ($('.cmg_team_logo').eq(1).children().attr('childElementCount') === 0) {
+            homeDivision = 'FCS';
+          } else {
+            homeDivision = 'FBS';
+          }
+
+          jsonRoad.teamDivision = roadDivision;
+          jsonRoad.opponentDivision = homeDivision;
+          jsonHome.teamDivision = homeDivision;
+          jsonHome.opponentDivision = roadDivision;
 
           var teamScore = parseInt(data.attr('data-away-score'));
 
