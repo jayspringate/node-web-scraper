@@ -20,8 +20,8 @@ module.exports =
 
         var $ = cheerio.load(html);
 
-        var roadConsensusSelector = $('table[class="match-logos"]').children().children().children().eq(1).text().split('%')[0];
-        var homeConsensusSelector = $('table[class="match-logos"]').children().children().children().eq(3).text().split('%')[0];
+        var roadConsensusSelector = $('table[class="match-logos"]').children().children().children().eq(1);
+        var homeConsensusSelector = $('table[class="match-logos"]').children().children().children().eq(3);
 
         // function totalOpenSelectorTest() {
         //   if (totalOpenSelector.text() === 'OFF' || totalOpenSelector.text().split('-')[0].length > 5) {
@@ -42,9 +42,8 @@ module.exports =
         // totalOpenSelectorTest();
         // spreadOpenSelectorTest();
 
-        var homeConsensus = Math.round(parseFloat(homeConsensusSelector));
-        var roadConsensus = Math.round(parseFloat(roadConsensusSelector));
-
+        var homeConsensus = Math.round(parseFloat(homeConsensusSelector.text().split('%')[0]));
+        var roadConsensus = Math.round(parseFloat(roadConsensusSelector.text().split('%')[0]));
 
         function findMatch() {
           var gameIndex = _.findIndex(gameDataArray, function(chr) {

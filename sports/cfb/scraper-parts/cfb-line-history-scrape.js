@@ -4,7 +4,7 @@ var async = require('async');
 var _ = require('lodash/array');
 var request = require('request');
 var cheerio = require('cheerio');
-var Game = require('../../../models/cfbGame');
+var Game = require('../../../models/CfbGame');
 var atsGrade = require('../../../scraper-functions/atsGrade');
 var suGrade = require('../../../scraper-functions/suGrade');
 var totalGrade = require('../../../scraper-functions/totalGrade');
@@ -28,37 +28,54 @@ module.exports =
 
         var $ = cheerio.load(html);
 
-        var spreadOpenSelector = $('a[href*="269"]').parent().parent().next().children().eq(1); //269 is an important ID
-
-        var totalOpenSelector = $('a[href*="269"]').parent().parent().next().children().last();
-
-        var spreadCloseSelector = $('a[href*="269"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last().prev();
-
-        var totalCloseSelector = $('a[href*="269"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last();
-
-        function totalOpenSelectorTest() {
-          if (totalOpenSelector.text() === 'OFF' || totalOpenSelector.text().split('-')[0].length > 5) {
-            console.log("OFF TEST FAIL - EVENTID = " + item);
-            totalOpenSelector = totalOpenSelector.parent().next().children().last();
-            totalOpenSelectorTest();
-          }
-        }
+        var spreadOpenSelector,
+            spreadCloseSelector,
+            totalOpenSelector,
+            totalCloseSelector,
+            spreadOpen,
+            spreadClose,
+            totalOpen,
+            totalClose;
 
         function spreadOpenSelectorTest() {
           if (spreadOpenSelector.text() === 'OFF' || spreadOpenSelector.text().split('/')[0].length > 5) {
             console.log("OFF TEST FAIL - EVENTID = " + item);
             spreadOpenSelector = spreadOpenSelector.parent().next().children().eq(1);
             spreadOpenSelectorTest();
+          } else {
+            spreadOpen = parseFloat(spreadOpenSelector.text().split('/')[0]);
           }
         }
 
-        totalOpenSelectorTest();
-        spreadOpenSelectorTest();
+        function totalOpenSelectorTest() {
+          if (totalOpenSelector.text() === 'OFF' || totalOpenSelector.text().split('-')[0].length > 5) {
+            console.log("OFF TEST FAIL - EVENTID = " + item);
+            totalOpenSelector = totalOpenSelector.parent().next().children().last();
+            totalOpenSelectorTest();
+          } else {
+            totalOpen = parseFloat(totalOpenSelector.text().split('-')[0]);
+          }
+        }
 
-        var spreadOpen = parseFloat(spreadOpenSelector.text().split('/')[0]);
-        var totalOpen = parseFloat(totalOpenSelector.text().split('-')[0]);
-        var spreadClose = parseFloat(spreadCloseSelector.text().split('/')[0]);
-        var totalClose = parseFloat(totalCloseSelector.text().split('-')[0]);
+        if (initHomeSpreadClose === '') {
+          spreadOpen = 99;
+          spreadClose = 99;
+        } else {
+          spreadOpenSelector = $('a[href*="269"]').parent().parent().next().children().eq(1); //269 is an important ID
+          spreadCloseSelector = $('a[href*="269"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last().prev();
+          spreadOpenSelectorTest();
+          spreadClose = parseFloat(spreadCloseSelector.text().split('/')[0]);
+        }
+
+        if (initTotalClose === '') {
+          spreadOpen = 99;
+          spreadClose = 99;
+        } else {
+          totalOpenSelector = $('a[href*="269"]').parent().parent().next().children().last();
+          totalCloseSelector = $('a[href*="269"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last();
+          totalOpenSelectorTest();
+          totalClose = parseFloat(totalCloseSelector.text().split('-')[0]);
+        }
 
         function findMatch() {
           var gameIndex = _.findIndex(gameDataArray, function(chr) {
@@ -107,8 +124,20 @@ module.exports =
               isNaN(spreadClose) === true ||
               isNaN(totalOpen) === true ||
               isNaN(totalClose) === true) && count === 2) {
+            if (isNaN(initHomeSpreadClose) === false) {
             spreadClose = initHomeSpreadClose;
             spreadOpen = initHomeSpreadClose;
+            } else {
+              spreadClose = 99;
+              spreadOpen = 99;
+            }
+            if (isNaN(initTotalClose) === false) {
+            totalClose = initHomeSpreadClose;
+            spreadOpen = initHomeSpreadClose;
+            } else {
+              spreadClose = 99;
+              spreadOpen = 99;
+            }
             totalClose = initTotalClose;
             totalOpen = initTotalClose;
             findMatch();
