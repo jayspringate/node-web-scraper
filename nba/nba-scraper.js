@@ -1,16 +1,16 @@
 'use strict';
 
 var async = require('async');
-var dateLoop = require('./scraper-parts/date-loop');
-var scoreboardScrape = require('./scraper-parts/scoreboard-scrape');
-var lineHistoryScrape = require('./scraper-parts/line-history-scrape');
+var nbaDateLoop = require('./scraper-parts/nba-date-loop');
+var nbaScoreboardScrape = require('./scraper-parts/nba-scoreboard-scrape');
+var nbaLineHistoryScrape = require('./scraper-parts/nba-line-history-scrape');
 
 module.exports = function(req, res) {
 
   async.waterfall([
-      dateLoop,
-      scoreboardScrape,
-      lineHistoryScrape
+      nbaDateLoop,
+      nbaScoreboardScrape,
+      nbaLineHistoryScrape
     ],
 
     function(err, result) {
