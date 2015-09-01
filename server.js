@@ -2,8 +2,8 @@
 
 var express = require('express');
 var app = express();
-var nbaScraper = require('./nba/nba-scraper');
-var cfbScraper = require('./cfb/cfb-scraper');
+var nbaScraper = require('./sports/nba/nba-scraper');
+var cfbScraper = require('./sports/cfb/cfb-scraper');
 
 app.get('/nbascrape', nbaScraper);
 app.get('/cfbscrape', cfbScraper);

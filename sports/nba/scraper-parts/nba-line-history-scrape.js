@@ -4,12 +4,12 @@ var async = require('async');
 var _ = require('lodash/array');
 var request = require('request');
 var cheerio = require('cheerio');
-var Game = require('../../models/nbaGame');
-var atsGrade = require('../../scraper-functions/atsGrade');
-var suGrade = require('../../scraper-functions/suGrade');
-var totalGrade = require('../../scraper-functions/totalGrade');
-var spreadMove = require('../../scraper-functions/spreadMove');
-var totalMove = require('../../scraper-functions/totalMove');
+var Game = require('../../../models/nbaGame');
+var atsGrade = require('../../../scraper-functions/atsGrade');
+var suGrade = require('../../../scraper-functions/suGrade');
+var totalGrade = require('../../../scraper-functions/totalGrade');
+var spreadMove = require('../../../scraper-functions/spreadMove');
+var totalMove = require('../../../scraper-functions/totalMove');
 
 module.exports =
 
