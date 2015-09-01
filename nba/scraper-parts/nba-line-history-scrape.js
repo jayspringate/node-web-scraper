@@ -4,16 +4,16 @@ var async = require('async');
 var _ = require('lodash/array');
 var request = require('request');
 var cheerio = require('cheerio');
-var Game = require('../../models/Game');
-var atsGrade = require('./assign/atsGrade');
-var suGrade = require('./assign/suGrade');
-var totalGrade = require('./assign/totalGrade');
-var spreadMove = require('./assign/spreadMove');
-var totalMove = require('./assign/totalMove');
+var Game = require('../../models/nbaGame');
+var atsGrade = require('../../scraper-functions/atsGrade');
+var suGrade = require('../../scraper-functions/suGrade');
+var totalGrade = require('../../scraper-functions/totalGrade');
+var spreadMove = require('../../scraper-functions/spreadMove');
+var totalMove = require('../../scraper-functions/totalMove');
 
 module.exports =
 
-  function lineHistoryScrape(eventIdArray, gameDataArray, callback) {
+  function lineHistoryScrape(eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose, callback) {
 
     var count = 0;
 
@@ -26,15 +26,15 @@ module.exports =
           console.log(err);
         }
 
-        var $$ = cheerio.load(html);
+        var $ = cheerio.load(html);
 
-        var spreadOpenSelector = $$('a[href*="269"]').parent().parent().next().children().eq(1); //269 is an important ID
+        var spreadOpenSelector = $('a[href*="269"]').parent().parent().next().children().eq(1); //269 is an important ID
 
-        var totalOpenSelector = $$('a[href*="269"]').parent().parent().next().children().last();
+        var totalOpenSelector = $('a[href*="269"]').parent().parent().next().children().last();
 
-        var spreadCloseSelector = $$('a[href*="269"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last().prev(); //761 is an important ID
+        var spreadCloseSelector = $('a[href*="269"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last().prev();
 
-        var totalCloseSelector = $$('a[href*="269"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last();
+        var totalCloseSelector = $('a[href*="269"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last();
 
         function totalOpenSelectorTest() {
           if (totalOpenSelector.text() === 'OFF' || totalOpenSelector.text().split('-')[0].length > 5) {
@@ -51,7 +51,6 @@ module.exports =
             spreadOpenSelectorTest();
           }
         }
-
 
         totalOpenSelectorTest();
         spreadOpenSelectorTest();
@@ -101,14 +100,17 @@ module.exports =
               isNaN(totalOpen) === true ||
               isNaN(totalClose) === true) && count < 2) {
             console.log('initially NaN, rerunning...EVENTID = ' + item);
+            console.log(spreadOpen, spreadClose, totalOpen, totalClose);
             count++;
             lineHistoryRequests(item, callback);
           } else if ((isNaN(spreadOpen) === true ||
               isNaN(spreadClose) === true ||
               isNaN(totalOpen) === true ||
               isNaN(totalClose) === true) && count === 2) {
-            spreadClose = spreadOpen;
-            totalClose = totalOpen;
+            spreadClose = initHomeSpreadClose;
+            spreadOpen = initHomeSpreadClose;
+            totalClose = initTotalClose;
+            totalOpen = initTotalClose;
             findMatch();
           } else {
             findMatch();

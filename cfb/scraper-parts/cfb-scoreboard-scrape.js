@@ -12,10 +12,13 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
     var eventIdArray = [];
 
+    var initHomeSpreadClose,
+        initTotalClose;
+
     var urlDate = item.getFullYear().toString() + '-' +
       (item.getMonth() + 1).toString() + '-' + item.getDate().toString();
 
-    var scoreboardUrl = 'beginUrlGoesHere' + urlDate; //actual url intentionally omitted
+    var scoreboardUrl = 'http://www.covers.com/Sports/NCAAF/Matchups?selectedDate=' + urlDate; //actual url intentionally omitted
 
     request(scoreboardUrl, function(err, response, html) {
       if (err) {
@@ -43,8 +46,8 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
           jsonHome.gameType = gameType;
           jsonRoad.season = season;
           jsonHome.season = season;
-          jsonRoad.teamCourt = 'road';
-          jsonHome.teamCourt = 'home';
+          jsonRoad.site = 'road';
+          jsonHome.site = 'home';
 
           var team = data.children().children('.cmg_team_name').first().contents().filter(function() {
             return this.nodeType == 3;
@@ -58,11 +61,11 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
           jsonRoad.opponent = opponent;
 
-          var teamScore = parseInt(data.children().children().children('.cmg_matchup_list_score_away').text());
+          var teamScore = parseInt(data.attr('data-away-score'));
 
           jsonRoad.teamScore = teamScore;
 
-          var opponentScore = parseInt(data.children().children().children('.cmg_matchup_list_score_home').text());
+          var opponentScore = parseInt(data.attr('data-home-score'));
 
           jsonRoad.opponentScore = opponentScore;
 
@@ -74,8 +77,22 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
           jsonHome.opponentScore = teamScore;
 
-          jsonRoad.eventId = element + '-r';
+          var teamConference = data.attr('data-away-conference');
+          var opponentConference = data.attr('data-home-conference');
+          var gameConference = data.attr('data-conference');
 
+          jsonRoad.teamConference = teamConference;
+          jsonRoad.opponentConference = opponentConference;
+          jsonRoad.gameConference = gameConference;
+
+          jsonHome.teamConference = opponentConference;
+          jsonHome.opponentConference = teamConference;
+          jsonRoad.gameConference = gameConference;
+
+          initHomeSpreadClose = parseFloat(data.attr('data-game-odd'));
+          initTotalClose = parseFloat(data.attr('data-game-total'));
+
+          jsonRoad.eventId = element + '-r';
           jsonHome.eventId = element + '-h';
 
           gameDataArray.push(jsonRoad, jsonHome);
@@ -85,7 +102,7 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
       asyncCallback();
 
-      callback(null, eventIdArray, gameDataArray);
+      callback(null, eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose);
 
     });
   });

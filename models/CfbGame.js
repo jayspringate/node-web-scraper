@@ -1,10 +1,10 @@
 'use strict';
 
 var Sql = require('sequelize');
-var sql = new Sql('wagermetrics_dev', 'wagermetrics_dev',
-  'passwordGoesHere', {dialect: 'postgres'});
+var sql = new Sql(process.env.PGDATABASE, process.env.PGUSER,
+  process.env.PGPASSWORD, {dialect: 'postgres'});
 
-var Game = module.exports = sql.define ('Game', {
+var cfbGame = module.exports = sql.define ('cfbGame', {
   date: Sql.DATEONLY,
   eventId: {type: Sql.STRING,
             unique: true,
@@ -12,7 +12,11 @@ var Game = module.exports = sql.define ('Game', {
           },
   team: Sql.STRING,
   opponent: Sql.STRING,
-  teamCourt: Sql.STRING,
+  site: Sql.STRING,
+  stadium: Sql.STRING,
+  teamConference: Sql.STRING,
+  opponentConference: Sql.STRING,
+  gameConference: Sql.STRING,
   teamScore: Sql.FLOAT,
   opponentScore: Sql.FLOAT,
   spreadOpen: Sql.FLOAT,
@@ -25,12 +29,14 @@ var Game = module.exports = sql.define ('Game', {
   suGrade: Sql.STRING,
   totalGrade: Sql.STRING,
   spreadMove: Sql.STRING,
-  totalMove: Sql.STRING
+  totalMove: Sql.STRING,
+  dayOfWeek: Sql.STRING,
+  attendance: Sql.FLOAT
 },
 
 {
   timestamps: false,
-  tableName: 'NbaGamesTestNovember'
+  tableName: 'CfbGamesTestcd'
 });
 
-Game.sync();
+cfbGame.sync();
