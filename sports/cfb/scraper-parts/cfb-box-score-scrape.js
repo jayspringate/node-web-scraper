@@ -20,11 +20,11 @@ module.exports =
 
         var $ = cheerio.load(html);
 
-        var stadiumSelector = $('div[class="row"]').last().text().split(' - ')[2].split('  ')[0];
+        var stadiumSelector = $('div[class="row"]').last();
 
-        var daySelector = $('div[class="row"]').last().text().split(' - ')[1].split(',')[0];
+        var daySelector = $('div[class="row"]').last();
 
-        var attendanceSelector = $('div[class="row"]').last().text().split(' - ')[3].trim();
+        var attendanceSelector = $('div[class="row"]').last();
 
         // function totalOpenSelectorTest() {
         //   if (totalOpenSelector.text() === 'OFF' || totalOpenSelector.text().split('-')[0].length > 5) {
@@ -45,9 +45,9 @@ module.exports =
         // totalOpenSelectorTest();
         // spreadOpenSelectorTest();
 
-        var stadium = stadiumSelector;
-        var dayOfWeek = daySelector;
-        var attendance = parseInt(attendanceSelector);
+        var stadium = stadiumSelector.text().split(' - ')[2].split('  ')[0];
+        var dayOfWeek = daySelector.text().split(' - ')[1].split(',')[0];
+        var attendance = parseInt(attendanceSelector.text().split(' - ')[3].trim());
 
         function findMatch() {
           var gameIndex = _.findIndex(gameDataArray, function(chr) {
