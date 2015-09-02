@@ -4,7 +4,7 @@ var async = require('async');
 var request = require('request');
 var cheerio = require('cheerio');
 
-module.exports = function scoreboardScrape(dateArray, weekArray, gameType, season, callback) {
+module.exports = function scoreboardScrape(dateArray, gameType, season, callback) {
 
   async.eachSeries(dateArray, function scoreboardRequest(item, asyncCallback) {
 
@@ -132,7 +132,7 @@ module.exports = function scoreboardScrape(dateArray, weekArray, gameType, seaso
 
       asyncCallback();
 
-      callback(null, weekArray, eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose);
+      callback(null, eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose);
 
     });
   });
