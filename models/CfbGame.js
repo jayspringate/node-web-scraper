@@ -10,7 +10,8 @@ var Game = module.exports = sql.define ('Game', {
             unique: true,
             primaryKey: true
           },
-  team: Sql.STRING,
+  teamAbbrev: Sql.STRING,
+  teamName: Sql.STRING,
   opponent: Sql.STRING,
   site: Sql.STRING,
   stadium: Sql.STRING,

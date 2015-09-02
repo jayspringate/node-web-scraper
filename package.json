@@ -44,6 +44,8 @@
     "lodash": "^3.10.0",
     "pg": "^4.4.1",
     "pg-hstore": "^2.3.2",
+    "phantom": "^0.7.2",
+    "phantomjs": "^1.9.18",
     "request": "^2.58.0",
     "sequelize": "^3.4.1"
   }

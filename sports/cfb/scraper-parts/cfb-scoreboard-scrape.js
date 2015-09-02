@@ -4,7 +4,7 @@ var async = require('async');
 var request = require('request');
 var cheerio = require('cheerio');
 
-module.exports = function scoreboardScrape(dateArray, gameType, season, callback) {
+module.exports = function scoreboardScrape(dateArray, weekArray, gameType, season, callback) {
 
   async.eachSeries(dateArray, function scoreboardRequest(item, asyncCallback) {
 
@@ -108,8 +108,19 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
           jsonHome.opponentConference = teamConference;
           jsonRoad.gameConference = gameConference;
 
-          initHomeSpreadClose = parseFloat(data.attr('data-game-odd'));
-          initTotalClose = parseFloat(data.attr('data-game-total'));
+          if(data.attr('data-game-odd') === '') {
+            initHomeSpreadClose = '';
+          } else {
+            initHomeSpreadClose = parseFloat(data.attr('data-game-odd'));
+          }
+
+          if(data.attr('data-game-total') === '') {
+            initTotalClose = '';
+          } else {
+            initTotalClose = parseFloat(data.attr('data-game-total'));
+          }
+
+          console.log(initHomeSpreadClose, initTotalClose);
 
           jsonRoad.eventId = element + '-r';
           jsonHome.eventId = element + '-h';
@@ -121,7 +132,7 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
       asyncCallback();
 
-      callback(null, eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose);
+      callback(null, weekArray, eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose);
 
     });
   });
