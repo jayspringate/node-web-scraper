@@ -12,8 +12,6 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
     var eventIdArray = [];
 
-    var primaryKeyArray = [];
-
     var initHomeSpreadClose,
         initTotalClose;
 
@@ -28,6 +26,8 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
       }
 
       var $ = cheerio.load(html);
+
+      var week = $('.cmg_active_navigation_item').text().trim().split(' ')[1];
 
       $('.cmg_matchup_game_box').each(function() {
         eventIdArray.push($(this).attr('data-event-id'));
@@ -44,6 +44,8 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
           jsonRoad.date = data.attr('data-game-date').split(' ')[0];
           jsonHome.date = data.attr('data-game-date').split(' ')[0];
+          jsonRoad.week = week;
+          jsonHome.week = week;
           jsonRoad.gameType = gameType;
           jsonHome.gameType = gameType;
           jsonRoad.season = season;
@@ -65,14 +67,38 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
           jsonHome.teamAbbrev = opponentAbbrev;
           jsonHome.opponentAbbrev = teamAbbrev;
 
-          var teamName = data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[0].trim();
+          var teamNameWithRank = data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[0].trim();
 
-          var opponentName = data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[1].trim();
+          var teamName, teamRanking;
+
+          if (teamNameWithRank[0] === '(') {
+            teamName = teamNameWithRank.split(')')[1].trim();
+            teamRanking = parseInt(teamNameWithRank.split(')')[0].split('(')[1]);
+          } else {
+            teamName = teamNameWithRank;
+            teamRanking = 0;
+          }
+
+          var opponentNameWithRank = data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[1].trim();
+
+          var opponentName, opponentRanking;
+
+          if (opponentNameWithRank[0] === '(') {
+            opponentName = opponentNameWithRank.split(')')[1].trim();
+            opponentRanking = parseInt(opponentNameWithRank.split(')')[0].split('(')[1]);
+          } else {
+            opponentName = opponentNameWithRank;
+            opponentRanking = 0;
+          }
 
           jsonRoad.teamName = teamName;
           jsonRoad.opponentName = opponentName;
           jsonHome.teamName = opponentName;
           jsonHome.opponentName = teamName;
+          jsonRoad.teamRanking = teamRanking;
+          jsonRoad.opponentRanking = opponentRanking;
+          jsonHome.teamRanking = opponentRanking;
+          jsonHome.opponentRanking = teamRanking;
 
           var teamScore = parseInt(data.attr('data-away-score'));
           var opponentScore = parseInt(data.attr('data-home-score'));
