@@ -6,6 +6,7 @@ var sql = new Sql(process.env.PGDATABASE, process.env.PGUSER,
 
 var Game = module.exports = sql.define ('Game', {
   date: Sql.DATEONLY,
+  week: Sql.STRING,
   eventId: {type: Sql.STRING,
             unique: true,
             primaryKey: true
@@ -14,6 +15,8 @@ var Game = module.exports = sql.define ('Game', {
   opponentAbbrev: Sql.STRING,
   teamName: Sql.STRING,
   opponentName: Sql.STRING,
+  teamRanking: Sql.FLOAT,
+  opponentRanking: Sql.FLOAT,
   teamConference: Sql.STRING,
   opponentConference: Sql.STRING,
   gameConference: Sql.STRING,

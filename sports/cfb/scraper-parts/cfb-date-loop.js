@@ -2,8 +2,8 @@
 
 module.exports = function dateLoop(callback) {
 
-  var begin = '2011,8,30';
-  var end = '2011,8,30';
+  var begin = '2011,9,6'; //week begins on Tuesday, ends on Monday
+  var end = '2011,11,22';
   var gameType = 'reg';
   var season = '2011-12';
 
