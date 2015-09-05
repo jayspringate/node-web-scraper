@@ -1,14 +1,21 @@
 var async = require('async');
 var request = require('request');
 var phantom = require('phantom');
+var _ = require('lodash/array');
 
-module.exports = function boxScoreScrape(eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose, callback) {
+module.exports =
+
+function boxScoreScrape(eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose, callback) {
 
   async.eachSeries(eventIdArray, function boxScoreRequest(item, asyncCallback) {
 
     //item here refers to eventIdArray
 
     var boxScoreUrl = 'http://www.covers.com/pageLoader/pageLoader.aspx?page=/data/ncf/results/2011-2012/boxscore' + item + '.html'; //actual url intentionally omitted
+
+    var selector, split, dayOfWeek, stadium, attendance,
+      roadDivision, homeDivision, roadSelector, homeSelector;
+    var arr = [];
 
     phantom.create(function(ph) {
       return ph.createPage(function(page) {
@@ -21,48 +28,77 @@ module.exports = function boxScoreScrape(eventIdArray, gameDataArray, initHomeSp
             setTimeout(function() {
               return page.evaluate(function() {
 
-                var selector = $('.row').last();
+                roadSelector = $('.box-logo').eq(0).children('img[src*="div2"]').length;
+                homeSelector = $('.box-logo').eq(1).children('img[src*="div2"]').length;
 
-                var arr = [];
+                if (roadSelector === 1) {
+                  roadDivision = 'FCS';
+                } else {
+                  roadDivision = 'FBS';
+                }
 
-                var split = selector.text().split(' - ');
+                if (homeSelector === 1) {
+                  homeDivision = 'FCS';
+                } else {
+                  homeDivision = 'FBS';
+                }
 
-                var dayOfWeek = split[1].split(',')[0];
-                var stadium = split[2].split(' Attendance')[0].trim().replace(/\'/g, "");
-                var attendance = parseInt(split[3].trim());
+                selector = $('.row').last();
+
+                arr = [];
+
+                split = selector.text().split(' - ');
+
+                dayOfWeek = split[1].split(',')[0];
+                stadium = split[2].split(' Attendance')[0].trim().replace(/\'/g, "");
+                attendance = parseInt(split[3].trim());
 
                 arr.push(dayOfWeek);
                 arr.push(stadium);
                 arr.push(attendance);
-
-                var gameIndex = _.findIndex(gameDataArray, function(chr) {
-                  return (chr.eventId == item + '-h');
-                });
-
-                gameDataArray[gameIndex].stadium = stadium;
-                gameDataArray[gameIndex].attendance = attendance;
-                gameDataArray[gameIndex].dayOfWeek = dayOfWeek;
-
-                gameIndex = _.findIndex(gameDataArray, function(chr) {
-                  return (chr.eventId == item + '-r');
-                });
-
-                gameDataArray[gameIndex].stadium = stadium;
-                gameDataArray[gameIndex].attendance = attendance;
-                gameDataArray[gameIndex].dayOfWeek = dayOfWeek;
-
-                asyncCallback();
-
-                callback(null, eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose);
+                arr.push(roadDivision);
+                arr.push(homeDivision);
 
                 return arr;
 
               }, function(result) {
                 console.log(result);
                 ph.exit();
+                dayOfWeek = result[0];
+                stadium = result[1];
+                attendance = result[2];
+                roadDivision = result[3];
+                homeDivision = result[4];
+
+                var gameIndex = _.findIndex(gameDataArray, function(chr) {
+                  return (chr.eventId == item + '-r');
+                });
+
+                gameDataArray[gameIndex].stadium = stadium;
+                gameDataArray[gameIndex].attendance = attendance;
+                gameDataArray[gameIndex].dayOfWeek = dayOfWeek;
+                gameDataArray[gameIndex].teamDivision = roadDivision;
+                gameDataArray[gameIndex].opponentDivision = homeDivision;
+
+                if (roadDivision === 'FCS' || homeDivision === 'FCS') {
+                  gameDataArray[gameIndex].gameConference = 'vs FCS';
+                }
+
+                gameIndex = _.findIndex(gameDataArray, function(chr) {
+                  return (chr.eventId == item + '-h');
+                });
+
+                gameDataArray[gameIndex].stadium = stadium;
+                gameDataArray[gameIndex].attendance = attendance;
+                gameDataArray[gameIndex].dayOfWeek = dayOfWeek;
+                gameDataArray[gameIndex].teamDivision = homeDivision;
+                gameDataArray[gameIndex].opponentDivision = roadDivision;
+
+                if (roadDivision === 'FCS' || homeDivision === 'FCS') {
+                  gameDataArray[gameIndex].gameConference = 'vs FCS';
+                }
               });
             }, 5000);
-
           });
         });
       });

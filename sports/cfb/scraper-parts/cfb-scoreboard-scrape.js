@@ -12,6 +12,8 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
     var eventIdArray = [];
 
+    var primaryKeyArray = [];
+
     var initHomeSpreadClose,
         initTotalClose;
 
@@ -46,54 +48,38 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
           jsonHome.gameType = gameType;
           jsonRoad.season = season;
           jsonHome.season = season;
-          jsonRoad.site = 'road';
-          jsonHome.site = 'home';
+          jsonRoad.teamSite = 'road';
+          jsonHome.teamSite = 'home';
 
-          var team = $('.cmg_team_name').first().contents().filter(function() {
+          var teamAbbrev = data.children().children('.cmg_team_name').first().contents().filter(function() {
             return this.nodeType == 3;
           }).text().trim();
 
-          jsonRoad.team = team;
 
-          var opponent = $('.cmg_team_name').last().contents().filter(function() {
+          var opponentAbbrev = data.children().children('.cmg_team_name').last().contents().filter(function() {
             return this.nodeType == 3;
           }).text().trim();
 
-          jsonRoad.opponent = opponent;
+          jsonRoad.teamAbbrev = teamAbbrev;
+          jsonRoad.opponentAbbrev = opponentAbbrev;
+          jsonHome.teamAbbrev = opponentAbbrev;
+          jsonHome.opponentAbbrev = teamAbbrev;
 
-          var homeDivision, roadDivision;
+          var teamName = data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[0].trim();
 
-          if ($('.cmg_team_logo').eq(0).children().attr('childElementCount') === 0) {
-            roadDivision = 'FCS';
-          } else {
-            roadDivision = 'FBS';
-          }
+          var opponentName = data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[1].trim();
 
-          if ($('.cmg_team_logo').eq(1).children().attr('childElementCount') === 0) {
-            homeDivision = 'FCS';
-          } else {
-            homeDivision = 'FBS';
-          }
-
-          jsonRoad.teamDivision = roadDivision;
-          jsonRoad.opponentDivision = homeDivision;
-          jsonHome.teamDivision = homeDivision;
-          jsonHome.opponentDivision = roadDivision;
+          jsonRoad.teamName = teamName;
+          jsonRoad.opponentName = opponentName;
+          jsonHome.teamName = opponentName;
+          jsonHome.opponentName = teamName;
 
           var teamScore = parseInt(data.attr('data-away-score'));
-
-          jsonRoad.teamScore = teamScore;
-
           var opponentScore = parseInt(data.attr('data-home-score'));
 
+          jsonRoad.teamScore = teamScore;
           jsonRoad.opponentScore = opponentScore;
-
-          jsonHome.team = opponent;
-
-          jsonHome.opponent = team;
-
           jsonHome.teamScore = opponentScore;
-
           jsonHome.opponentScore = teamScore;
 
           var teamConference = data.attr('data-away-conference');
@@ -106,21 +92,23 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
           jsonHome.teamConference = opponentConference;
           jsonHome.opponentConference = teamConference;
-          jsonRoad.gameConference = gameConference;
+          jsonHome.gameConference = gameConference;
 
           if(data.attr('data-game-odd') === '') {
-            initHomeSpreadClose = '';
+            jsonHome.initHomeSpreadClose = '';
+            jsonRoad.initHomeSpreadClose = '';
           } else {
-            initHomeSpreadClose = parseFloat(data.attr('data-game-odd'));
+            jsonHome.initHomeSpreadClose = parseFloat(data.attr('data-game-odd'));
+            jsonRoad.initHomeSpreadClose = parseFloat(data.attr('data-game-odd'));
           }
 
           if(data.attr('data-game-total') === '') {
-            initTotalClose = '';
+            jsonRoad.initTotalClose = '';
+            jsonHome.initTotalClose = '';
           } else {
-            initTotalClose = parseFloat(data.attr('data-game-total'));
+            jsonRoad.initTotalClose = parseFloat(data.attr('data-game-total'));
+            jsonHome.initTotalClose = parseFloat(data.attr('data-game-total'));
           }
-
-          console.log(initHomeSpreadClose, initTotalClose);
 
           jsonRoad.eventId = element + '-r';
           jsonHome.eventId = element + '-h';
@@ -132,7 +120,7 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
 
       asyncCallback();
 
-      callback(null, eventIdArray, gameDataArray, initHomeSpreadClose, initTotalClose);
+      callback(null, eventIdArray, gameDataArray);
 
     });
   });
