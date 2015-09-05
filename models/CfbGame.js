@@ -11,18 +11,13 @@ var Game = module.exports = sql.define ('Game', {
             primaryKey: true
           },
   teamAbbrev: Sql.STRING,
+  opponentAbbrev: Sql.STRING,
   teamName: Sql.STRING,
-  teamHomeStadium: Sql.STRING,
-  opponent: Sql.STRING,
-  site: Sql.STRING,
-  stadium: Sql.STRING,
-  teamDivision: Sql.STRING,
-  opponentDivision: Sql.STRING,
+  opponentName: Sql.STRING,
   teamConference: Sql.STRING,
   opponentConference: Sql.STRING,
   gameConference: Sql.STRING,
-  teamConsensus: Sql.FLOAT,
-  opponentConsensus: Sql.FLOAT,
+  teamSite: Sql.STRING,
   teamScore: Sql.FLOAT,
   opponentScore: Sql.FLOAT,
   spreadOpen: Sql.FLOAT,
@@ -37,7 +32,13 @@ var Game = module.exports = sql.define ('Game', {
   spreadMove: Sql.STRING,
   totalMove: Sql.STRING,
   dayOfWeek: Sql.STRING,
-  attendance: Sql.FLOAT
+  attendance: Sql.FLOAT,
+  stadium: Sql.STRING,
+  teamHomeStadium: Sql.STRING,
+  teamDivision: Sql.STRING,
+  opponentDivision: Sql.STRING,
+  teamConsensus: Sql.FLOAT,
+  opponentConsensus: Sql.FLOAT
 },
 
 {

@@ -1,5 +1,7 @@
 'use strict';
 
+//initHomeSpreadClose is broken
+
 var async = require('async');
 var _ = require('lodash/array');
 var request = require('request');
