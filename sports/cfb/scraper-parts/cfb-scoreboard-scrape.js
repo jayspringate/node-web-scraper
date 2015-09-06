@@ -4,7 +4,7 @@ var async = require('async');
 var request = require('request');
 var cheerio = require('cheerio');
 
-module.exports = function scoreboardScrape(dateArray, gameType, season, callback) {
+module.exports = function scoreboardScrape(dateArray, site, gameType, season, callback) {
 
   async.eachSeries(dateArray, function scoreboardRequest(item, asyncCallback) {
 
@@ -13,7 +13,7 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
     var eventIdArray = [];
 
     var initHomeSpreadClose,
-        initTotalClose;
+      initTotalClose;
 
     var urlDate = item.getFullYear().toString() + '-' +
       (item.getMonth() + 1).toString() + '-' + item.getDate().toString();
@@ -50,8 +50,14 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
           jsonHome.gameType = gameType;
           jsonRoad.season = season;
           jsonHome.season = season;
-          jsonRoad.teamSite = 'road';
-          jsonHome.teamSite = 'home';
+
+          if (site === 'ignore') {
+            jsonRoad.teamSite = 'road';
+            jsonHome.teamSite = 'home';
+          } else {
+            jsonRoad.teamSite = site;
+            jsonHome.teamSite = site;
+          }
 
           var teamAbbrev = data.children().children('.cmg_team_name').first().contents().filter(function() {
             return this.nodeType == 3;
@@ -67,7 +73,17 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
           jsonHome.teamAbbrev = opponentAbbrev;
           jsonHome.opponentAbbrev = teamAbbrev;
 
-          var teamNameWithRank = data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[0].trim();
+          var teamNameWithRank, opponentNameWithRank;
+
+          if (data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[1] === undefined) {
+            teamNameWithRank = data.children().children('.cmg_matchup_header_team_names').text().split(' vs ')[0].trim();
+            opponentNameWithRank = data.children().children('.cmg_matchup_header_team_names').text().split(' vs ')[1].trim();
+            jsonRoad.teamSite = 'neutral';
+            jsonHome.teamSite = 'neutral';
+          } else {
+            teamNameWithRank = data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[0].trim();
+            opponentNameWithRank = data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[1].trim();
+          }
 
           var teamName, teamRanking;
 
@@ -78,8 +94,6 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
             teamName = teamNameWithRank;
             teamRanking = 0;
           }
-
-          var opponentNameWithRank = data.children().children('.cmg_matchup_header_team_names').text().split(' at ')[1].trim();
 
           var opponentName, opponentRanking;
 
@@ -120,7 +134,7 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
           jsonHome.opponentConference = teamConference;
           jsonHome.gameConference = gameConference;
 
-          if(data.attr('data-game-odd') === '') {
+          if (data.attr('data-game-odd') === '') {
             jsonHome.initHomeSpreadClose = '';
             jsonRoad.initHomeSpreadClose = '';
           } else {
@@ -128,7 +142,7 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
             jsonRoad.initHomeSpreadClose = parseFloat(data.attr('data-game-odd'));
           }
 
-          if(data.attr('data-game-total') === '') {
+          if (data.attr('data-game-total') === '') {
             jsonRoad.initTotalClose = '';
             jsonHome.initTotalClose = '';
           } else {
