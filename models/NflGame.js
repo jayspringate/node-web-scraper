@@ -36,7 +36,7 @@ var Game = module.exports = sql.define ('Game', {
 
 {
   timestamps: false,
-  tableName: 'NflGamesTest'
+  tableName: 'NflGames'
 });
 
 Game.sync();
