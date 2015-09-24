@@ -2,10 +2,10 @@
 
 module.exports = function dateLoop(callback) {
 
-  var begin = '2015,1,4'; //using Sundays
-  var end = '2015,1,18';
-  var gameType = 'playoff';
-  var season = '2014-15';
+  var begin = '2015,9,20'; //using Sundays
+  var end = '2015,9,20';
+  var gameType = 'reg';
+  var season = '2015-16';
   var site = 'ignore';
 
   var dateArray = [];
