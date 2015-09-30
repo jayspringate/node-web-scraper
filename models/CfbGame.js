@@ -29,6 +29,7 @@ var Game = module.exports = sql.define ('Game', {
   totalClose: Sql.FLOAT,
   season: Sql.STRING,
   gameType: Sql.STRING,
+  spreadStatus: Sql.STRING,
   atsGrade: Sql.STRING,
   suGrade: Sql.STRING,
   totalGrade: Sql.STRING,

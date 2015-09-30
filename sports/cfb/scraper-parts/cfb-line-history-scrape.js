@@ -5,11 +5,12 @@ var _ = require('lodash/array');
 var request = require('request');
 var cheerio = require('cheerio');
 var Game = require('../../../models/CfbGame');
-var atsGrade = require('../../../scraper-functions/atsGrade');
-var suGrade = require('../../../scraper-functions/suGrade');
-var totalGrade = require('../../../scraper-functions/totalGrade');
-var spreadMove = require('../../../scraper-functions/spreadMove');
-var totalMove = require('../../../scraper-functions/totalMove');
+var atsGrade = require('../../../scraper-functions/ats-grade');
+var suGrade = require('../../../scraper-functions/su-grade');
+var totalGrade = require('../../../scraper-functions/total-grade');
+var spreadMove = require('../../../scraper-functions/spread-move');
+var totalMove = require('../../../scraper-functions/total-move');
+var spreadStatus = require('../../../scraper-functions/spread-status');
 
 module.exports =
 
@@ -85,6 +86,7 @@ module.exports =
             totalGrade(gameDataArray, gameIndex);
             spreadMove(gameDataArray, gameIndex);
             totalMove(gameDataArray, gameIndex);
+            spreadStatus(gameDataArray, gameIndex);
 
             delete gameDataArray[gameIndex].initHomeSpreadClose;
             delete gameDataArray[gameIndex].initTotalClose;
