@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function(arr, i) {
-  if (arr[i].spreadClose === (99 || -99)) { //added for cfb, does not affect nba
+  if (arr[i].spreadClose === 99 || arr[i].spreadClose === -99) { //added for cfb, does not affect nba
     arr[i].atsGrade = 'N/A';
   } else {
     if ((arr[i].teamScore + arr[i].spreadClose) > arr[i].opponentScore) {
