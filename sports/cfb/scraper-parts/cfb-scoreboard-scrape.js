@@ -134,6 +134,36 @@ module.exports = function scoreboardScrape(dateArray, site, gameType, season, ca
           jsonHome.opponentConference = teamConference;
           jsonHome.gameConference = gameConference;
 
+          var teamDivision, opponentDivision;
+
+          function assignConference (conf, div) {
+
+          if (conf === ('American Athletic' ||
+                                  'Atlantic Coast' ||
+                                  'Big 12' ||
+                                  'Big Ten' ||
+                                  'Conference USA' ||
+                                  'Independents I-A' ||
+                                  'Mid-American' ||
+                                  'Mountain West' ||
+                                  'Pacific-12' ||
+                                  'Southeastern' ||
+                                  'Sun Belt')) {
+            div = 'FBS';
+          } else {
+            div = 'FCS';
+          }
+
+        }
+
+        assignConference(teamConference, teamDivision);
+        assignConference(opponentConference, opponentDivision);
+
+          jsonRoad.teamDivision = teamDivision;
+          jsonRoad.opponentDivision = opponentDivision;
+          jsonHome.teamDivision = opponentDivision;
+          jsonHome.opponentDivision = teamDivision;
+
           if (data.attr('data-game-odd') === '') {
             jsonHome.initHomeSpreadClose = '';
             jsonRoad.initHomeSpreadClose = '';
