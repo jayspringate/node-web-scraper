@@ -12,7 +12,7 @@ var Game = module.exports = sql.define ('Game', {
           },
   team: Sql.STRING,
   opponent: Sql.STRING,
-  teamCourt: Sql.STRING,
+  teamSite: Sql.STRING,
   teamScore: Sql.FLOAT,
   opponentScore: Sql.FLOAT,
   spreadOpen: Sql.FLOAT,
