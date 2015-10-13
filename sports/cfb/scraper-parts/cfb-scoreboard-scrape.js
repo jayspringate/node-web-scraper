@@ -136,28 +136,37 @@ module.exports = function scoreboardScrape(dateArray, site, gameType, season, ca
 
           var teamDivision, opponentDivision;
 
-          function assignConference (conf, div) {
-
-          if (conf === ('American Athletic' ||
-                                  'Atlantic Coast' ||
-                                  'Big 12' ||
-                                  'Big Ten' ||
-                                  'Conference USA' ||
-                                  'Independents I-A' ||
-                                  'Mid-American' ||
-                                  'Mountain West' ||
-                                  'Pacific-12' ||
-                                  'Southeastern' ||
-                                  'Sun Belt')) {
-            div = 'FBS';
+          if (teamConference === 'American Athletic' ||
+              teamConference === 'Atlantic Coast' ||
+              teamConference === 'Big 12' ||
+              teamConference === 'Big Ten' ||
+              teamConference === 'Conference USA' ||
+              teamConference === 'Independents I-A' ||
+              teamConference === 'Mid-American' ||
+              teamConference === 'Mountain West' ||
+              teamConference === 'Pacific-12' ||
+              teamConference === 'Southeastern' ||
+              teamConference === 'Sun Belt') {
+            teamDivision = 'FBS';
           } else {
-            div = 'FCS';
+            teamDivision = 'FCS';
           }
 
-        }
-
-        assignConference(teamConference, teamDivision);
-        assignConference(opponentConference, opponentDivision);
+          if (opponentConference === 'American Athletic' ||
+              opponentConference === 'Atlantic Coast' ||
+              opponentConference === 'Big 12' ||
+              opponentConference === 'Big Ten' ||
+              opponentConference === 'Conference USA' ||
+              opponentConference === 'Independents I-A' ||
+              opponentConference === 'Mid-American' ||
+              opponentConference === 'Mountain West' ||
+              opponentConference === 'Pacific-12' ||
+              opponentConference === 'Southeastern' ||
+              opponentConference === 'Sun Belt') {
+            opponentDivision = 'FBS';
+          } else {
+            opponentDivision = 'FCS';
+          }
 
           jsonRoad.teamDivision = teamDivision;
           jsonRoad.opponentDivision = opponentDivision;
