@@ -2,8 +2,8 @@
 
 module.exports = function dateLoop(callback) {
 
-  var begin = '2015,9,27'; //using Sundays
-  var end = '2015,9,27';
+  var begin = '2015,10,11'; //using Sundays
+  var end = '2015,10,11';
   var gameType = 'reg';
   var season = '2015-16';
   var site = 'ignore';
