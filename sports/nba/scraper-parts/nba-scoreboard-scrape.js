@@ -18,7 +18,7 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
     var urlDate = item.getFullYear().toString() + '-' +
       (item.getMonth() + 1).toString() + '-' + item.getDate().toString();
 
-    var scoreboardUrl = 'beginUrlGoesHere' + urlDate; //actual url intentionally omitted
+    var scoreboardUrl = 'http://www.covers.com/sports/nba/matchups?selectedDate=' + urlDate;
 
     request(scoreboardUrl, function(err, response, html) {
       if (err) {
