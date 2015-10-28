@@ -46,8 +46,8 @@ module.exports = function scoreboardScrape(dateArray, gameType, season, callback
           jsonHome.gameType = gameType;
           jsonRoad.season = season;
           jsonHome.season = season;
-          jsonRoad.teamCourt = 'road';
-          jsonHome.teamCourt = 'home';
+          jsonRoad.teamSite = 'road';
+          jsonHome.teamSite = 'home';
 
           var team = data.children().children('.cmg_team_name').first().contents().filter(function() {
             return this.nodeType == 3;
