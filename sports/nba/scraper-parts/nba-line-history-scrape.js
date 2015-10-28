@@ -65,7 +65,7 @@ module.exports =
 
         function findMatch() {
           var gameIndex = _.findIndex(gameDataArray, function(chr) {
-            return ((chr.teamCourt == 'home') && (chr.eventId == item + '-h'));
+            return ((chr.teamSite == 'home') && (chr.eventId == item + '-h'));
           });
 
           gameDataArray[gameIndex].spreadOpen = spreadOpen;
@@ -87,7 +87,7 @@ module.exports =
           assignWrite();
 
           gameIndex = _.findIndex(gameDataArray, function(chr) {
-            return chr.teamCourt == 'road' && chr.eventId == item + '-r';
+            return chr.teamSite == 'road' && chr.eventId == item + '-r';
           });
 
           gameDataArray[gameIndex].spreadOpen = -spreadOpen;
