@@ -56,7 +56,7 @@ module.exports =
           }
         }
 
-        spreadOpenSelector = $('a[href*="38"]').parent().parent().next().children().eq(1); //269 is an important ID
+        spreadOpenSelector = $('a[href*="38"]').parent().parent().next().children().eq(1); //38 is an important ID
         spreadOpenSelectorTest();
         spreadCloseSelector = $('a[href*="38"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last().prev();
         spreadClose = parseFloat(spreadCloseSelector.text().split('/')[0]);
