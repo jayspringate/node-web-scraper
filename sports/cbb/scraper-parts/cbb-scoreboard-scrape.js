@@ -4,7 +4,7 @@ var async = require('async');
 var request = require('request');
 var cheerio = require('cheerio');
 
-module.exports = function scoreboardScrape(dateArray, site, season, callback) {
+module.exports = function scoreboardScrape(dateArray, season, callback) {
 
   async.eachSeries(dateArray, function scoreboardRequest(item, asyncCallback) {
 
@@ -46,14 +46,8 @@ module.exports = function scoreboardScrape(dateArray, site, season, callback) {
           jsonHome.gameType = data.attr('data-competition-type');
           jsonRoad.season = season;
           jsonHome.season = season;
-
-          if (site === 'ignore') {
-            jsonRoad.teamSite = 'road';
-            jsonHome.teamSite = 'home';
-          } else {
-            jsonRoad.teamSite = site;
-            jsonHome.teamSite = site;
-          }
+          jsonRoad.teamSite = 'road';
+          jsonHome.teamSite = 'home';
 
           var teamAbbrev = data.children().children('.cmg_team_name').first().contents().filter(function() {
             return this.nodeType == 3;
@@ -141,9 +135,6 @@ module.exports = function scoreboardScrape(dateArray, site, season, callback) {
           if (data.attr('data-game-total') === '') {
             jsonRoad.initTotalClose = '';
             jsonHome.initTotalClose = '';
-          } else {
-            jsonRoad.initTotalClose = parseFloat(data.attr('data-game-total'));
-            jsonHome.initTotalClose = parseFloat(data.attr('data-game-total'));
           }
 
           jsonRoad.eventId = element + '-r';

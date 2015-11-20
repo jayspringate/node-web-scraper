@@ -66,6 +66,21 @@ module.exports =
         totalCloseSelector = $('a[href*="269"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last();
         totalClose = parseFloat(totalCloseSelector.text().split('-')[0]);
 
+        if(isNaN(spreadOpen) === true ||
+           isNaN(spreadClose) === true) {
+              spreadOpenSelector = $('a[href*="38"]').parent().parent().next().children().eq(1); //38 is an important ID
+              spreadOpenSelectorTest();
+              spreadCloseSelector = $('a[href*="38"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last().prev();
+              spreadClose = parseFloat(spreadCloseSelector.text().split('/')[0]);
+        }
+
+        if(isNaN(totalOpen) === true ||
+           isNaN(totalClose) === true) {
+            totalOpenSelector = $('a[href*="38"]').parent().parent().next().children().last();
+            totalOpenSelectorTest();
+            totalCloseSelector = $('a[href*="38"]').parent().parent().nextUntil('tr[bgcolor=#ECECE4]').children().last();
+            totalClose = parseFloat(totalCloseSelector.text().split('-')[0]);
+        }
 
         var gameIndex;
 
@@ -118,17 +133,14 @@ module.exports =
           if(gameDataArray[gameIndex].initHomeSpreadClose === '' &&
              gameDataArray[gameIndex].initTotalClose === '') {
 
-          } else if (isNaN(spreadOpen) === true &&
-            isNaN(spreadClose) === true &&
-            isNaN(totalOpen) === true &&
-            isNaN(totalClose) === true && gameDataArray[gameIndex].initHomeSpreadClose !== '') {
-            console.log('initially NaN, rerunning...EVENTID = ' + item);
-            console.log(spreadOpen, spreadClose, totalOpen, totalClose);
-            lineHistoryRequests(item, callback);
+            //do nothing. not writing games with no spread.
+
           } else if ((isNaN(spreadOpen) === true ||
               isNaN(spreadClose) === true ||
               isNaN(totalOpen) === true ||
               isNaN(totalClose) === true)) {
+
+              console.log('At least one value is NaN, will review. EVENTID = ' + item);
 
               gameDataArray[gameIndex].review = 'yes';
 
@@ -144,17 +156,15 @@ module.exports =
             }
             if (isNaN(totalOpen) === true ||
               isNaN(totalClose) === true) {
-              if (gameDataArray[gameIndex].initTotalClose !== '') {
-                totalOpen = gameDataArray[gameIndex].initTotalClose;
-                totalClose = gameDataArray[gameIndex].initTotalClose;
-              } else {
-                totalOpen = 77;
-                totalClose = 77;
-              }
+
+                totalOpen = 99;
+                totalClose = 99;
+
             }
 
             findMatch();
           } else {
+            gameDataArray[gameIndex].review = 'no';
             findMatch();
           }
         }

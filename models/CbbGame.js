@@ -49,7 +49,8 @@ var Game = module.exports = sql.define ('Game', {
   teamDivision: Sql.STRING,
   opponentDivision: Sql.STRING,
   teamConsensus: Sql.FLOAT,
-  opponentConsensus: Sql.FLOAT
+  opponentConsensus: Sql.FLOAT,
+  tournamentSeed: Sql.FLOAT
 },
 
 {

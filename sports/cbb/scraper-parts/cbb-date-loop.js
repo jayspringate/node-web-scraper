@@ -5,11 +5,10 @@ module.exports = function dateLoop(callback) {
  //this will scrape yesterday's games
 
   var today = new Date();
-  var getTodayDate = today.getFullYear() + ',' + (today.getMonth() + 1) + ',' + (today.getDate() - 1);
-  var begin = '2015,11,15';
-  var end = '2015,11,15';
+  var todayDate = today.getFullYear() + ',' + (today.getMonth() + 1) + ',' + (today.getDate() - 1);
+  var begin = todayDate;
+  var end = todayDate;
   var season = '2015-16';
-  var site = 'ignore';
 
   var dateArray = [];
 
@@ -17,5 +16,5 @@ module.exports = function dateLoop(callback) {
     dateArray.push(new Date(date));
   }
 
-  callback(null, dateArray, site, season);
+  callback(null, dateArray, season);
 };
