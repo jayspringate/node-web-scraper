@@ -7,7 +7,7 @@ module.exports = function dateLoop(callback) {
   var today = new Date();
   var begin = today.setDate(today.getDate() - 1); //yesterday
   var end = begin;
-  var gameType = 'reg';
+  var gameType = 'bowl';
   var season = '2015-16';
   var site = 'ignore';
 
